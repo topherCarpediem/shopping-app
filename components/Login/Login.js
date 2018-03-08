@@ -11,6 +11,9 @@ import {
 import LoginForm from "./LoginForm"
 
 export default class Login extends Component {
+    constructor(props){
+        super(props)
+    }
     render() {
         return (
             <View style={styles.container}>
@@ -47,7 +50,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         paddingTop: 10,
         color: "white",
-        opacity: 0.8
+        
     },
     subHeading: {
         fontSize: 20,
