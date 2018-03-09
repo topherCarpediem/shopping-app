@@ -21,6 +21,10 @@ export default class Login extends Component {
                     <Image style={styles.logo} source={require("../../src/assets/images/logo.png")} />
                     <Text style={styles.heading}>SECOND CHANCES</Text>
                     <Text style={styles.subHeading}>Buy and Sell Great Quality Items</Text>
+                    <Button 
+                        title="Asdasd"
+                        onPress={() => this.props.navigation.navigate("Home")}
+                    />
                 </View>
                 <LoginForm />
             </View>
