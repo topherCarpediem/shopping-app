@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, Text, TextInput, StyleSheet, Image, ScrollView } from "react-native";
 
-import Icon from "react-native-vector-icons/FontAwesome";
-
-import Swiper from "react-native-swiper";
+import SearchBar from "./SearchBar";
+import Banner from "./Banner";
+import Nav from "./Nav";
+import Category from "./Category"
 
 export default class Home extends Component {
     constructor(props){
@@ -13,39 +14,24 @@ export default class Home extends Component {
     render(){
         return(
             <View style={{flex: 1,backgroundColor: "#d9d9d9"}}>
-                <View style={styles.inputContainer}>
-                    <Icon style={styles.emailIcon} name="search" size={20} color="#e74c3c" />
-                    <TextInput 
-                        style={styles.input}
-                        underlineColorAndroid='transparent'
-                        />
-                </View>
-                
+                <ScrollView 
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{flexGrow: 1}}>
+                    <View style={{ height: 250}}>
+                        <Banner />
+                    </View>
+                    <View style={{flex: 1}}>
+                        <View style={{ height: 250 }}>
+                            <Category />
+                        </View>
+                    </View>
+                    <Text>asasdasd</Text>
+                    <Text>asasdasd</Text>
+                </ScrollView>
+
+                <SearchBar />
+                <Nav />    
             </View>
         )
     }
 }
-
-
-
-const styles = StyleSheet.create({
-    inputContainer: {
-        flexDirection: 'row',
-        borderRadius: 30,
-        alignItems: 'center',
-        flexGrow: 1,
-
-        marginTop: 10,
-        marginLeft: 10,
-        marginRight: 10,
-        paddingLeft: 10,
-        paddingRight: 10,
-        position: "absolute",
-        backgroundColor: "white"
-    },
-    input: {
-        flex: 1,
-        height: 35,
-        
-    },
-})
