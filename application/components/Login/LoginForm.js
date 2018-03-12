@@ -56,6 +56,7 @@ export default class LoginForm extends Component {
                 </View>
                 
                 <TouchableOpacity
+                    
                     style={styles.getStartedButton}
                     onPress={this.login}>
                     <Text style={styles.getStartedText}>Get Started</Text>

@@ -3,9 +3,10 @@ import React, { Component } from 'react';
 import { StackNavigator } from "react-navigation";
 import { View, Text, Animated, Easing } from "react-native";
 
-import Login from "./components/Login/Login";
-import Home from "./components/Home/Home"
+import Login from "./application/components/Login/Login";
 
+import Nav from './application/components/Home/Nav/Nav';
+import Product from './application/components/Product/Product';
 
 const transitionConfig = () => {
   return {
@@ -38,7 +39,10 @@ const RootStack = StackNavigator(
       screen: Login,
     },
     Home: {
-      screen: Home
+      screen: Nav
+    },
+    Product: {
+      screen: Product,
     }
   },
   {
