@@ -101,12 +101,12 @@ export default class Product extends Component {
                             <Text style={{ fontSize: 13, color: "white" }}>Chat</Text>
                         </TouchableOpacity>
                     </View>
+                    <View style={{ flex: 2, alignItems: "center", justifyContent: "center", backgroundColor: "#e74c3c" }}>
+                        <Text style={{ fontSize: 13, color: "white" }}>BUY NOW</Text>
+                    </View>
                     <View style={styles.items}>
                         <Icon name="shopping-cart" size={25} color="white" />
                         <Text style={{ fontSize: 13, color: "white" }}>Add to Cart</Text>
-                    </View>
-                    <View style={{ flex: 2, alignItems: "center", justifyContent: "center", backgroundColor: "#e74c3c" }}>
-                        <Text style={{ fontSize: 13, color: "white" }}>BUY NOW</Text>
                     </View>
                 </View>
 
