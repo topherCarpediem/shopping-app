@@ -67,7 +67,7 @@ export default TabNavigator(
                 
                 let navigationAction = NavigationActions.navigate({
                   routeName: "Sell",
-                  params: source,
+                  action: NavigationActions.navigate({ routeName: "SellStack", params: source})
                 })
                 props.navigation.dispatch(navigationAction)
               }
