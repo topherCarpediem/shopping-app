@@ -64,23 +64,14 @@ export default TabNavigator(
               }
               else {
                 let source = { uri: response.uri };
-                
+
                 let navigationAction = NavigationActions.navigate({
                   routeName: "Sell",
-                  action: NavigationActions.navigate({ routeName: "SellStack", params: source})
+                  params: source
                 })
                 props.navigation.dispatch(navigationAction)
               }
             });
-
-
-            // let navigationAction = NavigationActions.navigate({
-            //   routeName: "Sell",
-            //   params: { hello: "hihihihi"},
-            //   //action: NavigationActions.navigate({ routeName: "Sell"})
-            // })
-
-            //props.navigation.dispatch(navigationAction)
           } else {
             currentIndex = index
             jumpToIndex(index)

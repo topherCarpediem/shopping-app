@@ -7,6 +7,7 @@ import Login from "./application/components/Login/Login";
 
 import Nav from './application/components/Home/Nav/Nav';
 import Product from './application/components/Product/Product';
+import Splash from "./application/components/Home/Splash";
 
 const transitionConfig = () => {
   return {
@@ -43,10 +44,13 @@ const RootStack = StackNavigator(
     },
     Product: {
       screen: Product,
+    },
+    Splash: {
+      screen: Splash
     }
   },
   {
-    initialRouteName: "Login",
+    initialRouteName: "Splash",
     headerMode: "none",
   }
 )

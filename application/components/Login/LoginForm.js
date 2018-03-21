@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, TextInput, StyleSheet, Button, ToastAndroid, TouchableOpacity, Text, Animated } from "react-native";
+import { AsyncStorage ,View, TextInput, StyleSheet, Button, ToastAndroid, TouchableOpacity, Text, Animated } from "react-native";
 import axios from "axios";
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -89,21 +89,25 @@ function login(){
     // }).catch(err => {
     //     console.log(err)
     // })
-    fetch("http://192.168.8.100:3000/user/login", {
-        method: "POST",
-        body: JSON.stringify({
-            emailAddress: this.state.emailAddress,
-            password: this.state.password
-        }),
-        headers:{
-            "content-type": "application/json"
-        }
-    }).then(response => response.json())
-    .then(jsonResult => {
-        console.log(jsonResult)
-        ToastAndroid.show(jsonResult.message, ToastAndroid.SHORT)
-    }).catch(err => {
-        console.log(err)
+    // fetch("http://192.168.8.100:3000/user/login", {
+    //     method: "POST",
+    //     body: JSON.stringify({
+    //         emailAddress: this.state.emailAddress,
+    //         password: this.state.password
+    //     }),
+    //     headers:{
+    //         "content-type": "application/json"
+    //     }
+    // }).then(response => response.json())
+    // .then(jsonResult => {
+    //     console.log(jsonResult)
+    //     ToastAndroid.show(jsonResult.message, ToastAndroid.SHORT)
+    // }).catch(err => {
+    //     console.log(err)
+    // })
+    fetch("http://10.24.120.15:3001/product/image").then(response => response.json())
+    .then(resultaaa => {
+        console.log(resultaaa)
     })
 }
 
@@ -125,7 +129,12 @@ function validateInput () {
 }
 
 function getStarted () {
-   ToastAndroid.show(this.state.emailAddress, ToastAndroid.SHORT)
+   //ToastAndroid.show(this.state.emailAddress, ToastAndroid.SHORT)
+   AsyncStorage.setItem("isLogin", "true").then(result => {
+       console.log(result)
+   }).catch(error => {
+       console.log(error)
+   })
 }
 
 const styles = StyleSheet.create({

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, TextInput, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
+import { BackHandler,View, Text, TextInput, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 
 import { StackNavigator } from "react-navigation";
 
@@ -48,25 +48,32 @@ class Home extends Component {
                 }
             ]
         }
+
+        this._handleBackPress = this._handleBackPress.bind(this)
+       
     }
 
-    cardPress(eto, title){
+    
+    cardPress(eto, title) {
         console.log(eto)
         this.props.navigation.navigate("Product", {
             productId: eto,
             title
         })
     }
+    
+    
 
     render() {
+        let i = 0
         return (
-
+            
             <View style={{ flex: 1, backgroundColor: "#d9d9d9" }}>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1 }}>
                     <View style={{ flex: 1, marginBottom: 70 }}>
-                        <View style={{ height: 250, backgroundColor: "green" }}>
+                        <View style={{ height: 250, backgroundColor: "white" }}>
                             <Banner />
                         </View>
                         <View style={{ height: 250 }}>
@@ -74,36 +81,36 @@ class Home extends Component {
                         </View>
                         <View style={{ marginTop: 48 }}>
                             <Text style={{ fontSize: 15, paddingLeft: 5, color: "#e74c3c", fontWeight: "bold" }}>DISCOVER PRODUCTS</Text>
-                            <View style={{ flexDirection: "row", flexWrap: "wrap",}}>
+                            <View style={{ flexDirection: "row", flexWrap: "wrap", }}>
                                 {this.state.data.map(card => {
                                     return (
-                                        <TouchableOpacity 
-                                        onPress={this.cardPress.bind(this, card.id, card.title)}>
-                                            <Card
+                                        <TouchableOpacity key={i++}
+                                            onPress={this.cardPress.bind(this, card.id, card.title)}>
+                                            <Card key={i++}
                                                 cardTitle={card.title}
                                                 cardPrice={card.price}
                                                 cardRating={card.rating}
-                                                
+
                                             />
                                         </TouchableOpacity>
                                     )
                                 })}
-                                
+
                             </View>
                         </View>
 
                         <TouchableOpacity
                             onPress={() => this.props.navigation.navigate("Product")}
                             style={styles.seeMoreButton}
-                            >
-                            <Text style={{ color: "#e74c3c",fontSize: 18, padding: 10}}>SEE MORE</Text>
+                        >
+                            <Text style={{ color: "#e74c3c", fontSize: 18, padding: 10 }}>SEE MORE</Text>
                         </TouchableOpacity>
                     </View>
 
                 </ScrollView>
 
                 <SearchBar />
-                
+
             </View>
         )
     }
@@ -124,9 +131,9 @@ export default StackNavigator({
             tabBarVisible: false
         }
     }
-},{
-    // transitionConfig: () => ({ screenInterpolator: () => null }),
-})
+}, {
+        // transitionConfig: () => ({ screenInterpolator: () => null }),
+    })
 
 const styles = StyleSheet.create({
     seeMoreButton: {
@@ -136,3 +143,4 @@ const styles = StyleSheet.create({
         margin: 10
     }
 })
+
