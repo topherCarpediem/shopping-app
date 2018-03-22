@@ -52,6 +52,7 @@ const RootStack = StackNavigator(
   {
     initialRouteName: "Splash",
     headerMode: "none",
+    transitionConfig: transitionConfig
   }
 )
 

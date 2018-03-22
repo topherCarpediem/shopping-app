@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BackHandler,View, Text, TextInput, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
+import { AsyncStorage ,BackHandler, View, Text, TextInput, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 
 import { StackNavigator } from "react-navigation";
 
@@ -14,60 +14,51 @@ import Product from "../Product/Product";
 class Home extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            data: [
-                {
-                    id: 6,
-                    title: "The first title adslfkj asdfaj sldkfjlaksdfalksdfj asdlfj asdflksdf lkasdjf lk ",
-                    price: 100,
-                    rating: "5 stars"
-                },
-                {
-                    id: 4,
-                    title: "The 2nd title",
-                    price: 100,
-                    rating: "5 stars"
-                },
-                {
-                    id: 213,
-                    title: "The 3tf title",
-                    price: 100,
-                    rating: "5 stars"
-                },
-                {
-                    id: 6656,
-                    title: "The 4th title",
-                    price: 100,
-                    rating: "5 stars"
-                },
-                {
-                    id: 6554546,
-                    title: "The 5th title",
-                    price: 100,
-                    rating: "5 stars"
-                }
-            ]
-        }
 
-        this._handleBackPress = this._handleBackPress.bind(this)
+        this.state = {
+            data: [],
+            token: ""
+        }
+        AsyncStorage.getItem("token").then(token => {
+            this.setState({ token: token })
+            return fetch("http://10.24.254.71:3001/product/page/1", {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            }).then(result => result.json())
+        })
+        .then(result => {
+            
+            this.setState({
+                data: [
+                    ...this.state.data,
+                    ...result
+                ]
+            })
+            console.log(this.state)
+        })
+        .catch(err => {
+            console.log(err)
+        })
        
     }
 
     
+
     cardPress(eto, title) {
-        console.log(eto)
+        
         this.props.navigation.navigate("Product", {
             productId: eto,
             title
         })
     }
-    
-    
 
     render() {
         let i = 0
         return (
-            
+
             <View style={{ flex: 1, backgroundColor: "#d9d9d9" }}>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
@@ -85,12 +76,13 @@ class Home extends Component {
                                 {this.state.data.map(card => {
                                     return (
                                         <TouchableOpacity key={i++}
-                                            onPress={this.cardPress.bind(this, card.id, card.title)}>
+                                            onPress={this.cardPress.bind(this, card.id, card.productName)}>
                                             <Card key={i++}
-                                                cardTitle={card.title}
-                                                cardPrice={card.price}
-                                                cardRating={card.rating}
-
+                                                cardTitle={card.productName}
+                                                cardPrice={card.productPrice}
+                                                cardRating={50}
+                                                cardImage={card.imageCover}
+                                                cardCredentials={this.state.token}
                                             />
                                         </TouchableOpacity>
                                     )
@@ -117,21 +109,24 @@ class Home extends Component {
 }
 
 
-export default StackNavigator({
-    Home: {
-        screen: Home,
-        navigationOptions: {
-            header: null
+export default StackNavigator(
+    {
+        Home: {
+            screen: Home,
+            navigationOptions: {
+                header: null,
+                
+            },
+            
+        },
+        Product: {
+            screen: Product,
+            navigationOptions: {
+                gesturesEnabled: false,
+                tabBarVisible: false
+            }
         }
-    },
-    Product: {
-        screen: Product,
-        navigationOptions: {
-            gesturesEnabled: false,
-            tabBarVisible: false
-        }
-    }
-}, {
+    }, {
         // transitionConfig: () => ({ screenInterpolator: () => null }),
     })
 

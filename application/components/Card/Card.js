@@ -18,7 +18,7 @@ export default class CardView extends Component {
                 height: (Dimensions.get("window").width / 2) - 7.5
             }
         }
-
+        console.log(this.props.cardImage)
         //this.cardPress = this.cardPress.bind(this)
 
     }
@@ -32,7 +32,12 @@ export default class CardView extends Component {
 
             <View style={this.state.cardContainer}>
                 <Image
-                    source={require("../../../src/assets/images/480x270.png")}
+                    source={{
+                        uri: "http://10.24.254.71:3001/product/images/633028c0b86b6d66b147885937990738.png",
+                        headers: {
+                            "Authorization": `Bearer ${this.props.cardCredentials}`
+                        }
+                    }}
                     style={this.state.image}
                 />
                 <Text>{this.props.cardTitle}</Text>
