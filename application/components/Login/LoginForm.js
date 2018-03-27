@@ -39,7 +39,7 @@ export default class LoginForm extends Component {
                         placeholder="Email address"
                         placeholderTextColor="white"
                         onChangeText={(value) => { this.setState({emailAddress: value}) } }
-                        onEndEditing={this.validateInput}
+                        //onEndEditing={this.validateInput}
                         underlineColorAndroid='transparent'
                         style={styles.input} />                    
                     
@@ -79,6 +79,29 @@ export default class LoginForm extends Component {
 
 
 function login(){
+    fetch("http://10.24.254.71:3001/user/login", {
+        method: "POST",
+        body: JSON.stringify({
+            emailAddress: this.state.emailAddress,
+            password: this.state.password
+        }),
+        headers: {
+            "Content-type": "application/json"
+        }
+    }).then(result => {
+        if(result.status === 200)
+            return result.json()
+        else
+            throw new Error("LoginFailedError")
+    }).then(jsonResponse => {
+        ToastAndroid.show(jsonResponse.token, ToastAndroid.SHORT)
+        AsyncStorage.setItem("token", jsonResponse.token).then(saved => {
+            ToastAndroid.show("The token saved", ToastAndroid.SHORT)
+            this.props.navigation.navigate("Home")
+        })
+    }).catch(err => {
+        ToastAndroid.show(err.message, ToastAndroid.SHORT)
+    })
     // axios.post("http://192.168.8.100:3000/user/login", {
     //     emailAddress: this.state.emailAddress,
     //     password: this.state.password
@@ -105,10 +128,7 @@ function login(){
     // }).catch(err => {
     //     console.log(err)
     // })
-    fetch("http://10.24.120.15:3001/product/image").then(response => response.json())
-    .then(resultaaa => {
-        console.log(resultaaa)
-    })
+    
 }
 
 function validateInput () {

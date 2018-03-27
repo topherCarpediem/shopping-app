@@ -7,10 +7,12 @@ export default class CardView extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            title: "This is the long card title that needs to be cut if nejhdd sjd jhdfjh ad djdhd djdhd d",
             cardContainer: {
+                flex: 1,
                 margin: 2.5,
                 backgroundColor: "white",
-                height: ((Dimensions.get("window").width / 2) - 7.5) + 75,
+                height: ((Dimensions.get("window").width / 2) - 7.5) + 65,
                 width: (Dimensions.get("window").width / 2) - 7.5
             },
             image: {
@@ -19,13 +21,9 @@ export default class CardView extends Component {
             }
         }
         console.log(this.props.cardImage)
-        //this.cardPress = this.cardPress.bind(this)
 
     }
 
-    // componentWillMount() {
-    //     ToastAndroid.show(this.props.data.length.toString(), ToastAndroid.SHORT)
-    // }
 
     render() {
         return (
@@ -40,10 +38,10 @@ export default class CardView extends Component {
                     }}
                     style={this.state.image}
                 />
-                <Text>{this.props.cardTitle}</Text>
-                <View style={{ flexDirection: "row" }}>
-                    <Text >{this.props.cardPrice}</Text>
-                    <Text >{this.props.cardRating}</Text>
+                <Text style={{margin: 5, marginBottom: 0, fontSize: 16, color: "#171717",}}>{this.state.title.length > 57 ? this.state.title.slice(0, 54) + "..." : this.state.title}</Text>
+                <View style={{ flexDirection: "row", position: "absolute", bottom: 0, margin: 5  }}>
+                    <Text style={{ flex:1, color: "#e74c3c"}}>&#8369; {this.props.cardPrice}</Text>
+                    <Text style={{ flex:1, textAlign: "right" }}>{this.props.cardRating}</Text>
                 </View>
             </View>
 

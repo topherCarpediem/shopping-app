@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { AsyncStorage ,BackHandler, View, Text, TextInput, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
+import { ToastAndroid, AsyncStorage, BackHandler, View, Text, TextInput, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 
 import { StackNavigator } from "react-navigation";
 
@@ -19,7 +19,9 @@ class Home extends Component {
             data: [],
             token: ""
         }
+
         AsyncStorage.getItem("token").then(token => {
+            
             this.setState({ token: token })
             return fetch("http://10.24.254.71:3001/product/page/1", {
                 method: "GET",
@@ -27,28 +29,27 @@ class Home extends Component {
                     "Content-type": "application/json",
                     "Authorization": `Bearer ${token}`
                 }
-            }).then(result => result.json())
-        })
-        .then(result => {
-            
+            }).then(result => {
+                return result.json()
+            })
+        }).then(result => {
             this.setState({
                 data: [
                     ...this.state.data,
                     ...result
                 ]
             })
-            console.log(this.state)
+            
+            //console.log(this.state)
+        }).catch(err => {
+            //console.log(err)
+            ToastAndroid.show(err.message, ToastAndroid.SHORT)
         })
-        .catch(err => {
-            console.log(err)
-        })
-       
+
     }
 
-    
-
     cardPress(eto, title) {
-        
+
         this.props.navigation.navigate("Product", {
             productId: eto,
             title
@@ -59,18 +60,18 @@ class Home extends Component {
         let i = 0
         return (
 
-            <View style={{ flex: 1, backgroundColor: "#d9d9d9" }}>
+            <View style={{ flex: 1, }}>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1 }}>
-                    <View style={{ flex: 1, marginBottom: 70 }}>
+                    <View style={{ flex: 1, marginBottom: 10 }}>
                         <View style={{ height: 250, backgroundColor: "white" }}>
                             <Banner />
                         </View>
                         <View style={{ height: 250 }}>
                             <Category />
                         </View>
-                        <View style={{ marginTop: 48 }}>
+                        <View style={{ marginTop: 38 }}>
                             <Text style={{ fontSize: 15, paddingLeft: 5, color: "#e74c3c", fontWeight: "bold" }}>DISCOVER PRODUCTS</Text>
                             <View style={{ flexDirection: "row", flexWrap: "wrap", }}>
                                 {this.state.data.map(card => {
@@ -115,9 +116,7 @@ export default StackNavigator(
             screen: Home,
             navigationOptions: {
                 header: null,
-                
             },
-            
         },
         Product: {
             screen: Product,
