@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { AsyncStorage ,View, TextInput, StyleSheet, Button, ToastAndroid, TouchableOpacity, Text, Animated } from "react-native";
-import axios from "axios";
+
+import { NavigationActions } from "react-navigation";
+
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -79,7 +81,7 @@ export default class LoginForm extends Component {
 
 
 function login(){
-    fetch("http://10.24.254.71:3001/user/login", {
+    fetch("http://192.168.8.103:3001/user/login", {
         method: "POST",
         body: JSON.stringify({
             emailAddress: this.state.emailAddress,
@@ -97,7 +99,19 @@ function login(){
         ToastAndroid.show(jsonResponse.token, ToastAndroid.SHORT)
         AsyncStorage.setItem("token", jsonResponse.token).then(saved => {
             ToastAndroid.show("The token saved", ToastAndroid.SHORT)
-            this.props.navigation.navigate("Home")
+
+            const resetAction = NavigationActions.reset({
+                index: 0,
+                actions: [
+                  NavigationActions.navigate({
+                    routeName: "Home",
+                  })
+                ]
+              });
+
+              this.props.navigation.dispatch(resetAction);
+
+            //1this.props.navigation.navigate("Home")
         })
     }).catch(err => {
         ToastAndroid.show(err.message, ToastAndroid.SHORT)

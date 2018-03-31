@@ -31,14 +31,14 @@ export default class CardView extends Component {
             <View style={this.state.cardContainer}>
                 <Image
                     source={{
-                        uri: "http://10.24.254.71:3001/product/images/633028c0b86b6d66b147885937990738.png",
+                        uri: this.props.cardImage,
                         headers: {
                             "Authorization": `Bearer ${this.props.cardCredentials}`
                         }
                     }}
                     style={this.state.image}
                 />
-                <Text style={{margin: 5, marginBottom: 0, fontSize: 16, color: "#171717",}}>{this.state.title.length > 57 ? this.state.title.slice(0, 54) + "..." : this.state.title}</Text>
+                <Text style={{margin: 5, marginBottom: 0, fontSize: 16, color: "#171717",}}>{this.props.cardTitle.length > 57 ? this.props.cardTitle.slice(0, 54) + "..." : this.props.cardTitle}</Text>
                 <View style={{ flexDirection: "row", position: "absolute", bottom: 0, margin: 5  }}>
                     <Text style={{ flex:1, color: "#e74c3c"}}>&#8369; {this.props.cardPrice}</Text>
                     <Text style={{ flex:1, textAlign: "right" }}>{this.props.cardRating}</Text>
@@ -47,6 +47,4 @@ export default class CardView extends Component {
 
         )
     }
-
-
 }

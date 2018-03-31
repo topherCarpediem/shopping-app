@@ -13,7 +13,7 @@ export default class Banner extends Component {
             <View style={{ flex: 1 }}>
                 <Swiper
                     activeDotColor="#e74c3c"
-                    autoplay={true}
+                    autoplay={!__DEV__?true:false}
                     autoplayTimeout={5}
                  >
                     <View style={{ flex: 1}}>

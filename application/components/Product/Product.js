@@ -23,7 +23,7 @@ export default class Product extends Component {
         const { params } = navigation.state;
         return {
             title: params.title,
-            // tabBarVisible: false
+            //tabBarVisible: true
         }
     };
 
