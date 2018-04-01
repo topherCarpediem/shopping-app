@@ -7,12 +7,16 @@ import Account from "../../Account/Account"
 import Sell from "../../Sell/Sell"
 
 import ImagePicker from "react-native-image-picker";
+import Crop from 'react-native-image-crop-picker';
+import Cart from "../../Cart/Cart";
 
 export default TabNavigator(
   {
     Home: { screen: Home },
     Sell: { screen: Sell },
+    Cart: { screen: Cart },
     Account: { screen: Account },
+
   },
   {
     navigationOptions: ({ navigation }) => ({
@@ -25,7 +29,10 @@ export default TabNavigator(
           iconName = `user-circle`;
         } else if (routeName === 'Sell') {
           iconName = `camera`;
+        } else if (routeName === 'Cart') {
+          iconName = `shopping-cart`;
         }
+
 
         return <Icon name={iconName} size={25} color={tintColor} />;
       },
@@ -63,13 +70,22 @@ export default TabNavigator(
                 console.log('User tapped custom button: ', response.customButton);
               }
               else {
-                let source = { uri: response.uri };
 
-                let navigationAction = NavigationActions.navigate({
-                  routeName: "Sell",
-                  params: source
-                })
-                props.navigation.dispatch(navigationAction)
+
+                Crop.openCropper({
+                  path: response.uri,
+                  width: 300,
+                  height: 400
+                }).then(image => {
+                  let source = { uri: image.path };
+                  //console.log(image);
+
+                  let navigationAction = NavigationActions.navigate({
+                    routeName: "Sell",
+                    params: source
+                  })
+                  props.navigation.dispatch(navigationAction)
+                });
               }
             });
           } else {

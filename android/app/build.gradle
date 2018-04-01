@@ -101,6 +101,7 @@ android {
         applicationId "com.onlineshopping"
         minSdkVersion 16
         targetSdkVersion 22
+        vectorDrawables.useSupportLibrary = true
         versionCode 1
         versionName "1.0"
         ndk {
@@ -148,6 +149,8 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-image-crop-picker')
+    
     compile project(':react-native-image-picker')
     compile project(':react-native-vector-icons')
     

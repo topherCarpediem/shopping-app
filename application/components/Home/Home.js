@@ -10,7 +10,8 @@ import {
     Image,
     ScrollView,
     TouchableOpacity,
-    ActivityIndicator
+    ActivityIndicator,
+    StatusBar
 } from "react-native";
 
 import { apiUri } from "../../../config";
@@ -24,6 +25,8 @@ import Category from "../Category/Category"
 import Card from "../Card/Card";
 import Product from "../Product/Product";
 import Splash from "./Splash";
+import ProductList from "../Product/ProductList";
+import Cart from "../Cart/Cart";
 
 
 class Home extends Component {
@@ -77,7 +80,8 @@ class Home extends Component {
         return (
 
             <View style={{ flex: 1 }}>
-
+            <StatusBar
+                backgroundColor="#e74c3c"/>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1 }}>
@@ -93,7 +97,7 @@ class Home extends Component {
 
                         <View style={{ marginTop: 38 }}>
                             <Text style={{ fontSize: 15, paddingLeft: 5, color: "#e74c3c", fontWeight: "bold" }}>DISCOVER PRODUCTS</Text>
-                            < View style={{ flexDirection: "row", flexWrap: "wrap", }}>
+                            <View style={{ flexDirection: "row", flexWrap: "wrap", }}>
                                 {
                                     this.state.data.map(card => {
                                         return (
@@ -115,9 +119,12 @@ class Home extends Component {
                         </View>
 
                         <TouchableOpacity
-                            onPress={() => this.props.navigation.navigate("Product")}
+                            onPress={() => this.props.navigation.navigate("ProductList", {
+                                token: this.state.token,
+                                title: "Discover"
+                            })}
                             style={styles.seeMoreButton}>
-
+                            
                             <Text style={{ color: "#e74c3c", fontSize: 18, padding: 10 }}>SEE MORE</Text>
                         </TouchableOpacity>
                     </View>
@@ -145,8 +152,15 @@ export default StackNavigator(
             screen: Product,
             navigationOptions: {
                 gesturesEnabled: false,
+                
                 //tabBarVisible: false
             }
+        },
+        ProductList: {
+            screen: ProductList
+        },
+        CartStack: {
+            screen: Cart
         }
     }, {
         // transitionConfig: () => ({ screenInterpolator: () => null }),

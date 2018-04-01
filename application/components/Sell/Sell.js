@@ -388,7 +388,7 @@ function sendRequests() {
     const formData = prepareFormData(this.state)
     console.log(formData)
     axios({
-        url: "http://192.168.8.103:3001/product/add",
+        url: `${apiUri}/product/add`,
         method: "POST",
         headers: {
             "Content-type": "  'multipart/form-data",

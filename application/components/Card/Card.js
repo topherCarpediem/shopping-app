@@ -9,6 +9,7 @@ export default class CardView extends Component {
         this.state = {
             title: "This is the long card title that needs to be cut if nejhdd sjd jhdfjh ad djdhd djdhd d",
             cardContainer: {
+                //backgroundColor: "green",
                 flex: 1,
                 margin: 2.5,
                 backgroundColor: "white",
@@ -20,8 +21,6 @@ export default class CardView extends Component {
                 height: (Dimensions.get("window").width / 2) - 7.5
             }
         }
-        console.log(this.props.cardImage)
-
     }
 
 
