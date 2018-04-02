@@ -248,6 +248,53 @@ export default class Cart extends Component {
         }
     }
 
+    checkoutProcess() {
+
+        this.setState({ loading: true })
+
+        const productDetails = []
+
+        this.state.data.forEach(cart => {
+            if (cart.check) {
+                productDetails.push({
+                    id: cart.product.id,
+                    quantity: cart.quantity
+                })
+            }
+        })
+
+        axios.post(`${apiUri}/order/checkout`,
+            {
+                productDetails: JSON.stringify(productDetails),
+            },
+            {
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${this.state.token}`
+                },
+            }).then(result => {
+                setTimeout(() => {
+                    this.setState({
+                        loading: false
+                    })
+                    Alert.alert('Success', result.data.message)
+                }, 1000)
+
+
+            }).catch(err => {
+                setTimeout(() => {
+                    this.setState({
+                        loading: false
+                    })
+                    Alert.alert('Error', err.response.data.message)
+                }, 1000)
+            })
+
+        //console.log(JSON.stringify(JSON.stringify(productDetails)))
+
+        //axios
+    }
+
     setModalVisible(visible) {
         this.setState({ modalVisible: visible });
     }
@@ -256,6 +303,7 @@ export default class Cart extends Component {
         let i = 0;
         return (
             <View style={{ flex: 1 }}>
+
                 <FlatList
                     refreshing={this.state.refreshing}
                     onRefresh={() => { this.getCartItem() }}
@@ -349,35 +397,38 @@ export default class Cart extends Component {
                 <Modal
                     transparent={true}
                     animationType="fade"
+                    onRequestClose={() => { }}
                     visible={this.state.modalVisible}>
                     <View style={{ flex: 0.8, backgroundColor: "black", opacity: 0.6 }}></View>
                     <View style={{ backgroundColor: "white", flex: 1 }}>
                         <View style={{ padding: 10, }}>
                             <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 5 }}>Order Summary</Text>
                             <View style={{ borderBottomWidth: 1, }}>
-                                
+
                                 {this.state.data.map((item, index) => {
-                                    return (
-                                        <View key={i++} style={{ flexDirection: "row", borderRightWidth: 1 }}>
-                                            <Text key={i++} style={{ flex: 3, borderTopWidth: 1, borderLeftWidth: 1, paddingLeft: 5 }}>{item.product.productName}</Text>
-                                            <Text key={i++} style={{ flex: 1, borderTopWidth: 1, borderLeftWidth: 1, textAlign: "center" }}>&#8369; {item.product.productPrice}</Text>
-                                            <Text key={i++} style={{ flex: 1, borderTopWidth: 1, borderLeftWidth: 1, textAlign: "center" }}>{item.quantity}</Text>
-                                        </View>
-                                    )
+                                    if (item.check) {
+                                        return (
+                                            <View key={i++} style={{ flexDirection: "row", borderRightWidth: 1 }}>
+                                                <Text key={i++} style={{ flex: 3, borderTopWidth: 1, borderLeftWidth: 1, paddingLeft: 5 }}>{item.product.productName}</Text>
+                                                <Text key={i++} style={{ flex: 1, borderTopWidth: 1, borderLeftWidth: 1, textAlign: "center" }}>&#8369; {item.product.productPrice}</Text>
+                                                <Text key={i++} style={{ flex: 1, borderTopWidth: 1, borderLeftWidth: 1, textAlign: "center" }}>{item.quantity}</Text>
+                                            </View>
+                                        )
+                                    }
                                 })}
                             </View>
 
 
                             <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 8 }}>Shipping To</Text>
-                            <Text style={{ fontWeight: "bold"}}>Full name</Text>
+                            <Text style={{ fontWeight: "bold" }}>Full name</Text>
                             <Text>Christopher Enriquez</Text>
-                            <Text style={{ fontWeight: "bold"}}>Billing Address</Text>
+                            <Text style={{ fontWeight: "bold" }}>Billing Address</Text>
                             <Text>Shipping Address</Text>
-                            <Text style={{ fontWeight: "bold"}}>Phone number</Text>
+                            <Text style={{ fontWeight: "bold" }}>Phone number</Text>
                             <Text>09262501012</Text>
-                            <Text style={{ fontWeight: "bold"}}>Order type</Text>
+                            <Text style={{ fontWeight: "bold" }}>Order type</Text>
                             <Text>Cash on Delivery</Text>
-                            <Text>Total  <Text style={{ fontSize: 20, color: "#e74c3c", fontWeight: "bold"}}>&#8369; {this.state.subTotal}</Text></Text>
+                            <Text>Total  <Text style={{ fontSize: 20, color: "#e74c3c", fontWeight: "bold" }}>&#8369; {this.state.subTotal}</Text></Text>
                         </View>
 
                         <View style={styles.modalButtonContainer}>
@@ -388,7 +439,7 @@ export default class Cart extends Component {
                             </View>
 
                             <View style={{ backgroundColor: '#e74c3c', flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                <TouchableOpacity style={{ padding: 18 }} onPress={() => { this.checkoutPress() }}>
+                                <TouchableOpacity style={{ padding: 18 }} onPress={() => { this.checkoutProcess() }}>
                                     <Text style={{ color: "white", fontSize: 15 }}>CONFIRM</Text>
                                 </TouchableOpacity>
                             </View>
@@ -396,17 +447,16 @@ export default class Cart extends Component {
                         </View>
 
                     </View>
-                </Modal>
 
-                {
-                    this.state.loading &&
-                    <View style={styles.loading}>
-                        <View style={{ backgroundColor: "white", padding: 20, borderRadius: 5 }}>
-                            <ActivityIndicator size={80} color="#e74c3c" />
+                    {
+                        this.state.loading &&
+                        <View style={styles.loading}>
+                            <View style={{ backgroundColor: "white", padding: 20, borderRadius: 5 }}>
+                                <ActivityIndicator size={80} color="#e74c3c" />
+                            </View>
                         </View>
-                    </View>
-                }
-
+                    }
+                </Modal>
             </View>
 
         )
