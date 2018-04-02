@@ -12,7 +12,8 @@ import {
     Dimensions,
     TextInput,
     ActivityIndicator,
-    StatusBar
+    StatusBar,
+    
 } from "react-native";
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -134,34 +135,34 @@ export default class Product extends Component {
                             {
                                 headers: {
                                     "Content-type": "application/json",
-                                    "Authorization": `Bearer ${this.state.token}`
-                                },
-
+                                    "Authorization": `Bearer ${this.state.token}`},
                             }).then(result => {
                                 console.log(result)
                                 setTimeout(() => {
                                     this.setLoadingVisible(false)
+                                    Alert.alert('Success!', result.data.message,
+                                        [{
+                                            text: 'OK',
+                                        },
+                                        {
+                                            text: 'VIEW CART', onPress: () => {
+                                                this.props.navigation.navigate('Cart')
+                                            }
+                                        }],
+                                        {
+                                            cancelable: false
+                                        }
+                                    )
                                 }, 1000)
 
-                                Alert.alert('Success!', result.data.message,
-                                    [{
-                                        text: 'OK',
 
-                                    },
-                                    {
-                                        text: 'VIEW CART', onPress: () => {
-                                            this.props.navigation.navigate('Cart')
-                                        }
-                                    }],
-                                    {
-                                        cancelable: false
-                                    }
-                                )
                             }).catch(err => {
+                                console.log(err.name)
                                 console.log(err.response)
-                                Alert.alert('Oops!, Somethings wrong!', err.response.data.message)
+
                                 setTimeout(() => {
                                     this.setLoadingVisible(false)
+                                    Alert.alert('Oops!, Somethings wrong!', err.response.data.message)
                                 }, 1000)
                             })
                     }
@@ -250,7 +251,7 @@ export default class Product extends Component {
                     <View style={styles.items}>
                         <TouchableOpacity>
                             <Icon name="comments" size={25} color="#e74c3c" />
-                            <Text style={{ fontSize: 13, color: "#e74c3c" }}>Chat</Text>
+                            <Text style={{ fontSize: 13, color: "#e74c3c" }}>CHAT</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ flex: 2, alignItems: "center", justifyContent: "center", backgroundColor: "#e74c3c" }}>
@@ -261,7 +262,7 @@ export default class Product extends Component {
                             onPress={() => { this.setModalVisible(true) }}>
                             <View style={{ justifyContent: "center", alignItems: "center" }}>
                                 <Icon name="shopping-cart" size={25} color="#e74c3c" />
-                                <Text style={{ fontSize: 13, color: "#e74c3c" }}>Add to Cart</Text>
+                                <Text style={{ fontSize: 13, color: "#e74c3c" }}>ADD TO CART</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -275,7 +276,6 @@ export default class Product extends Component {
                     transparent={true}
                     visible={this.state.modalVisible}
                     onRequestClose={() => {
-
                         this.setModalVisible(false)
                     }}>
                     <View style={{ flex: 1, backgroundColor: "black", opacity: 0.6 }}>
@@ -299,8 +299,6 @@ export default class Product extends Component {
                                     <Text >Stocks: </Text>
                                     <Text >{this.state.data.stocks}</Text>
                                 </View>
-
-
                             </View>
 
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", flex: 1 }}>
@@ -328,13 +326,13 @@ export default class Product extends Component {
                         <View style={styles.modalButtonContainer}>
                             <View style={{ backgroundColor: '#1abc9c', flex: 1, justifyContent: "center", alignItems: "center" }}>
                                 <TouchableOpacity style={{ padding: 18 }} onPress={() => { this.setModalVisible(false) }}>
-                                    <Text style={{ color: "white", fontSize: 15 }}>Cancel</Text>
+                                    <Text style={{ color: "white", fontSize: 15 }}>CANCEL</Text>
                                 </TouchableOpacity>
                             </View>
 
                             <View style={{ backgroundColor: '#e74c3c', flex: 1, justifyContent: "center", alignItems: "center" }}>
                                 <TouchableOpacity style={{ padding: 18 }} onPress={this.addToCart}>
-                                    <Text style={{ color: "white", fontSize: 15 }}>Add to Cart</Text>
+                                    <Text style={{ color: "white", fontSize: 15 }}>ADD TO CART</Text>
                                 </TouchableOpacity>
                             </View>
 

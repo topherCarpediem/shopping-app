@@ -5,6 +5,7 @@ import { NavigationActions } from "react-navigation";
 
 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { apiUri } from "../../../config";
 
 export default class LoginForm extends Component {
     constructor(props) {
@@ -81,7 +82,7 @@ export default class LoginForm extends Component {
 
 
 function login(){
-    fetch("http://192.168.8.103:3001/user/login", {
+    fetch(`${apiUri}/user/login`, {
         method: "POST",
         body: JSON.stringify({
             emailAddress: this.state.emailAddress,

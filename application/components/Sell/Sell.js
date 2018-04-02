@@ -104,7 +104,6 @@ export default class Sell extends Component {
                 [
                     { text: 'Yes', onPress: () => {  
                         
-                        
                         const resetAction = NavigationActions.reset({
                         index: 0,
                         actions: [
