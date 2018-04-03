@@ -19,7 +19,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import Entypo from 'react-native-vector-icons/Entypo';
-//delete-empty
+
 import { apiUri } from "../../../config";
 import axios from "axios";
 
@@ -33,6 +33,7 @@ export default class Cart extends Component {
             data: [],
             subTotal: 0,
             loading: false,
+            modalLoading: false,
             refreshing: false,
             modalVisible: false
 
@@ -44,14 +45,11 @@ export default class Cart extends Component {
             this.setState({
                 token
             })
-
             this.getCartItem()
-
-
-
         })
     }
 
+    
     _onPress(item, status) {
         let copyOfCart = this.state.data.map(cart => {
             if (cart.cid === item.cid) {
@@ -250,7 +248,7 @@ export default class Cart extends Component {
 
     checkoutProcess() {
 
-        this.setState({ loading: true })
+        this.setState({ modalLoading: true })
 
         const productDetails = []
 
@@ -275,7 +273,7 @@ export default class Cart extends Component {
             }).then(result => {
                 setTimeout(() => {
                     this.setState({
-                        loading: false
+                        modalLoading: false
                     })
                     Alert.alert('Success', result.data.message)
                 }, 1000)
@@ -284,7 +282,7 @@ export default class Cart extends Component {
             }).catch(err => {
                 setTimeout(() => {
                     this.setState({
-                        loading: false
+                        modalLoading: false
                     })
                     Alert.alert('Error', err.response.data.message)
                 }, 1000)
@@ -449,7 +447,7 @@ export default class Cart extends Component {
                     </View>
 
                     {
-                        this.state.loading &&
+                        this.state.modalLoading &&
                         <View style={styles.loading}>
                             <View style={{ backgroundColor: "white", padding: 20, borderRadius: 5 }}>
                                 <ActivityIndicator size={80} color="#e74c3c" />
@@ -457,6 +455,14 @@ export default class Cart extends Component {
                         </View>
                     }
                 </Modal>
+                {
+                        this.state.loading &&
+                        <View style={styles.loading}>
+                            <View style={{ backgroundColor: "white", padding: 20, borderRadius: 5 }}>
+                                <ActivityIndicator size={80} color="#e74c3c" />
+                            </View>
+                        </View>
+                    }
             </View>
 
         )

@@ -6,7 +6,9 @@ import {
     AsyncStorage,
     Image,
     FlatList,
-    TabBa
+    ScrollView,
+    Animated,
+    Easing,
 } from "react-native";
 
 import { TabNavigator, StackNavigator } from "react-navigation";
@@ -14,7 +16,33 @@ import { TabNavigator, StackNavigator } from "react-navigation";
 import axios from "axios";
 import { apiUri } from "../../../config";
 
- class Account extends Component {
+import Buyer from "./Buyer";
+import Seller from "./Seller"
+import Purchases from "./Purchases";
+import Profile from "./Profile";
+
+
+const AccountTab = TabNavigator(
+    {
+        Buying: { screen: Buyer },
+        Selling: { screen: Seller },
+    }, {
+        
+        tabBarOptions: {
+            activeTintColor: '#e74c3c',
+            inactiveTintColor: 'black',
+            indicatorStyle: {
+                backgroundColor: "#e74c3c"
+            },
+            style: {
+                backgroundColor: 'white',
+              }
+        },
+        swipeEnabled: true,
+        animationEnabled: true
+    })
+
+class Account extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -34,105 +62,41 @@ import { apiUri } from "../../../config";
         })
     }
 
-    componentDidMount() {
-        axios.get(`${apiUri}/user/info`, {
-            headers: {
-                "Content-type": "application/json",
-                "Authorization": `Bearer ${this.state.token}`
-            }
-        }).then(result => {
-            console.log(result)
-        }).then(err => {
-            console.log(err)
-        })
-    }
-
     render() {
         return (
-            <View>
-                <FlatList
-                    data={this.state.data}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) =>
-                        <View>
-                            <View style={{ backgroundColor: "green", height: 150 }}>
-                                <Image />
-                            </View>
-                        </View>
-                    }
-                />
-
-                <Text>asdasdASd</Text>
-                <ActivityIndicator size="small" color="#00ff00" animating={true} />
+            <View style={{ flex: 1 }}>
+                
+                    <View style={{ backgroundColor: "black", height: 140 }}>
+                        <Image />
+                    </View>
+                    <AccountTab screenProps={this.props.navigation} />
+                
             </View>
         )
     }
 }
 
-
-class Topher extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            token: "",
-            data: [{
-                id: "",
-                sd: "asdasd"
-            }]
-        }
-    }
-
-    componentWillMount() {
-        AsyncStorage.getItem("token").then(token => {
-            this.setState({
-                token
-            })
-        })
-    }
-
-    componentDidMount() {
-        axios.get(`${apiUri}/user/info`, {
-            headers: {
-                "Content-type": "application/json",
-                "Authorization": `Bearer ${this.state.token}`
-            }
-        }).then(result => {
-            console.log(result)
-        }).then(err => {
-            console.log(err)
-        })
-    }
-
-    render() {
-        return (
-            <View>
-    
-
-                <Text>asdasdASd</Text>
-                <ActivityIndicator size="small" color="#00ff00" animating={true} />
-            </View>
-        )
-    }
-}
-
-
-
-
-
-const Style = TabNavigator({
-    Buyer: {
-        screen: Account
-    },
-    Sell: {
-        screen: Topher
-    }
-})
-
-export default StackNavigator({
+export default AccountStack = StackNavigator({
     Account: {
-        screen: Style,
+        screen: Account,
         navigationOptions: {
-            header: 'None'
-        }
+            header: null,
+        },
+    },
+    Purchases: {
+        screen: Purchases
+    },
+    Profile: {
+        screen: Profile
     }
+},{
+    transitionConfig: () => ({ screenInterpolator: () => null }),
 })
+
+
+
+
+
+
+
+
