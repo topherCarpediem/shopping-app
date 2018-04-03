@@ -13,7 +13,7 @@ import {
     TextInput,
     ActivityIndicator,
     StatusBar,
-    
+
 } from "react-native";
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -135,7 +135,8 @@ export default class Product extends Component {
                             {
                                 headers: {
                                     "Content-type": "application/json",
-                                    "Authorization": `Bearer ${this.state.token}`},
+                                    "Authorization": `Bearer ${this.state.token}`
+                                },
                             }).then(result => {
                                 console.log(result)
                                 setTimeout(() => {

@@ -22,10 +22,6 @@ export default class Buyer extends Component {
 
     }
 
-    
-
-
-
     render() {
         return (
             <View style={{ flex: 1, flexDirection: "row" }}>

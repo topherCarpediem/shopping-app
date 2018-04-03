@@ -9,7 +9,7 @@ import {
     Image,
 } from "react-native";
 
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from "axios"
 import { apiUri } from "../../../config";
 
@@ -73,7 +73,7 @@ export default class Purchases extends Component {
 
     render() {
         return (
-            <View style={{ flex: 1 }}><Text>Purchases</Text>
+            <View style={{ flex: 1 }}>
                 <FlatList
                     refreshing={this.state.refreshing}
                     onRefresh={() => { }}
@@ -97,7 +97,28 @@ export default class Purchases extends Component {
                                     </TouchableOpacity>
                                 </View>
 
+                                <View style={{ padding: 10, flex: 1 }}>
+                                    <Text>{item.product.productName}</Text>
+                                    <Text>Quantity: {item.quantity}</Text>
+                                    <Text style={{ fontWeight: 'bold', color: "#e74c3c" }}>Price: &#8369; {item.product.productPrice}</Text>
+                                </View>
 
+                                <View style={{ flex: 1, justifyContent: "center" }}>
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            this.props.navigation.navigate('Track', {
+                                                orderId: item.id
+                                            })
+                                        }}
+                                        style={{
+                                            alignSelf: "flex-end",
+                                            alignItems: "center",
+                                            padding: 10
+                                        }}>
+                                        <Icon name="map-marker" color="#e74c3c" size={50} />
+                                        <Text>Track your order</Text>
+                                    </TouchableOpacity>
+                                </View>
 
                             </View>
                         </View>

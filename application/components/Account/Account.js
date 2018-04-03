@@ -20,6 +20,7 @@ import Buyer from "./Buyer";
 import Seller from "./Seller"
 import Purchases from "./Purchases";
 import Profile from "./Profile";
+import Track from "./Track";
 
 
 const AccountTab = TabNavigator(
@@ -88,6 +89,9 @@ export default AccountStack = StackNavigator({
     },
     Profile: {
         screen: Profile
+    },
+    Track: {
+        screen: Track
     }
 },{
     transitionConfig: () => ({ screenInterpolator: () => null }),
