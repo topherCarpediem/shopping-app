@@ -11,7 +11,10 @@ import {
     ScrollView,
     TouchableOpacity,
     ActivityIndicator,
-    StatusBar
+    StatusBar,
+    Easing,
+    Animated,
+    Alert
 } from "react-native";
 
 import { apiUri } from "../../../config";
@@ -35,36 +38,26 @@ class Home extends Component {
 
         this.state = {
             data: [],
-            token: "",
-
         }
 
-        AsyncStorage.getItem("token").then(token => {
-            this.setState({ token: token })
+        axios.get(`${apiUri}/product/page/1`,
+            {
+                headers: {
+                    "Content-type": "application/json",
+                }
+            })
+            .then(result => {
 
-            axios.get(`${apiUri}/product/page/1`,
-                {
-                    headers: {
-                        "Content-type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
+                this.setState({
+                    data: [
+                        ...this.state.data,
+                        ...result.data
+                    ],
+
                 })
-                .then(result => {
-                    this.setState({
-                        data: [
-                            ...this.state.data,
-                            ...result.data
-                        ],
-
-                    })
-                }).catch(err => {
-                    console.log(err.response)
-                })
-        }).catch(err => {
-            //console.log(err)
-            ToastAndroid.show(err.message, ToastAndroid.SHORT)
-        })
-
+            }).catch(err => {
+                Alert.alert('Error', err.response.data.message)
+            })
     }
 
     cardPress(eto, title) {
@@ -80,8 +73,8 @@ class Home extends Component {
         return (
 
             <View style={{ flex: 1 }}>
-            <StatusBar
-                backgroundColor="#e74c3c"/>
+                <StatusBar
+                    backgroundColor="#e74c3c" />
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1 }}>
@@ -108,7 +101,7 @@ class Home extends Component {
                                                     cardPrice={card.productPrice}
                                                     cardRating={50}
                                                     cardImage={card.imageCover}
-                                                    cardCredentials={this.state.token}
+                                                    //cardCredentials={this.state.token}
                                                 />
                                             </TouchableOpacity>
                                         )
@@ -120,11 +113,10 @@ class Home extends Component {
 
                         <TouchableOpacity
                             onPress={() => this.props.navigation.navigate("ProductList", {
-                                token: this.state.token,
                                 title: "Discover"
                             })}
                             style={styles.seeMoreButton}>
-                            
+
                             <Text style={{ color: "#e74c3c", fontSize: 18, padding: 10 }}>SEE MORE</Text>
                         </TouchableOpacity>
                     </View>
@@ -136,6 +128,30 @@ class Home extends Component {
 
             </View>
         )
+    }
+}
+
+const transitionConfig = () => {
+    return {
+        transitionSpec: {
+            duration: 750,
+            easing: Easing.out(Easing.poly(4)),
+            timing: Animated.timing,
+            useNativeDriver: true,
+        },
+        screenInterpolator: sceneProps => {
+            const { layout, position, scene } = sceneProps
+
+            const thisSceneIndex = scene.index
+            const width = layout.initWidth
+
+            const translateX = position.interpolate({
+                inputRange: [thisSceneIndex - 1, thisSceneIndex],
+                outputRange: [width, 0],
+            })
+
+            return { transform: [{ translateX }] }
+        },
     }
 }
 
@@ -152,8 +168,6 @@ export default StackNavigator(
             screen: Product,
             navigationOptions: {
                 gesturesEnabled: false,
-                
-                //tabBarVisible: false
             }
         },
         ProductList: {
@@ -163,7 +177,7 @@ export default StackNavigator(
             screen: Cart
         }
     }, {
-        // transitionConfig: () => ({ screenInterpolator: () => null }),
+        transitionConfig: transitionConfig,
     })
 
 const styles = StyleSheet.create({

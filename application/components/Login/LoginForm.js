@@ -1,11 +1,23 @@
 import React, { Component } from "react";
-import { AsyncStorage ,View, TextInput, StyleSheet, Button, ToastAndroid, TouchableOpacity, Text, Animated } from "react-native";
+import {
+    AsyncStorage,
+    View,
+    TextInput,
+    StyleSheet,
+    Button,
+    ToastAndroid,
+    TouchableOpacity,
+    Text,
+    Animated,
+    Alert
+} from "react-native";
 
 import { NavigationActions } from "react-navigation";
 
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { apiUri } from "../../../config";
+import axios from "axios";
 
 export default class LoginForm extends Component {
     constructor(props) {
@@ -23,14 +35,14 @@ export default class LoginForm extends Component {
                 marginBottom: 20
             }
         }
-        
+
         this.getStarted = getStarted.bind(this)
         this.validateInput = validateInput.bind(this)
         this.login = login.bind(this)
 
     }
 
-    
+
 
     render() {
         return (
@@ -41,37 +53,47 @@ export default class LoginForm extends Component {
                     <TextInput
                         placeholder="Email address"
                         placeholderTextColor="white"
-                        onChangeText={(value) => { this.setState({emailAddress: value}) } }
+                        onChangeText={(value) => { this.setState({ emailAddress: value }) }}
                         //onEndEditing={this.validateInput}
                         underlineColorAndroid='transparent'
-                        style={styles.input} />                    
-                    
+                        style={styles.input} />
+
                 </View>
                 <View style={styles.inputContainer}>
                     <Icon style={styles.emailIcon} name="lock" size={25} color="white" />
                     <TextInput
                         placeholder="Password"
                         placeholderTextColor="white"
-                        onChangeText={(value) => { this.setState({password: value}) } }
+                        onChangeText={(value) => { this.setState({ password: value }) }}
                         underlineColorAndroid='transparent'
                         secureTextEntry={true}
                         style={styles.input} />
                 </View>
-                
+
                 <TouchableOpacity
-                    
                     style={styles.getStartedButton}
-                    onPress={this.login}>
+                    onPress={this.validateInput}>
                     <Text style={styles.getStartedText}>Get Started</Text>
                 </TouchableOpacity>
+
                 <View style={styles.textContainer}>
-                    <Text style={{ flex: 1, fontSize: 18, color: "white", paddingLeft: 10}}>Create Account</Text>
-                    <Text style={{ flex: 1, fontSize: 18, color: "white", paddingLeft: 60}}>Forgot Password</Text>
+                    <Text style={{ flex: 1, fontSize: 18, color: "white", paddingLeft: 10 }}>Create Account</Text>
+
                 </View>
-                <View style={{alignSelf: 'flex-end'}}>
+                <View style={{ alignSelf: 'flex-end' }}>
                     <TouchableOpacity
                         style={styles.skipButton}
-                        onPress={this.getStarted}>
+                        onPress={() => {
+                            const resetAction = NavigationActions.reset({
+                                index: 0,
+                                actions: [
+                                    NavigationActions.navigate({
+                                        routeName: "Home",
+                                    })
+                                ]
+                            });
+                            this.props.navigation.dispatch(resetAction);
+                        }}>
                         <Text style={styles.skipText}>Skip</Text>
                     </TouchableOpacity>
                 </View>
@@ -81,95 +103,64 @@ export default class LoginForm extends Component {
 }
 
 
-function login(){
-    fetch(`${apiUri}/user/login`, {
-        method: "POST",
-        body: JSON.stringify({
+function login() {
+
+    axios.post(`${apiUri}/user/login`,
+        {
             emailAddress: this.state.emailAddress,
             password: this.state.password
-        }),
-        headers: {
-            "Content-type": "application/json"
-        }
-    }).then(result => {
-        if(result.status === 200)
-            return result.json()
-        else
-            throw new Error("LoginFailedError")
-    }).then(jsonResponse => {
-        ToastAndroid.show(jsonResponse.token, ToastAndroid.SHORT)
-        AsyncStorage.setItem("token", jsonResponse.token).then(saved => {
-            ToastAndroid.show("The token saved", ToastAndroid.SHORT)
+        },
+        {
+            headers: {
+                "Content-type": "application/json"
+            }
+        }).then(response => {
 
-            const resetAction = NavigationActions.reset({
-                index: 0,
-                actions: [
-                  NavigationActions.navigate({
-                    routeName: "Home",
-                  })
-                ]
-              });
+            AsyncStorage.setItem("token", response.data.token).then(saved => {
 
-              this.props.navigation.dispatch(resetAction);
+                const resetAction = NavigationActions.reset({
+                    index: 0,
+                    actions: [
+                        NavigationActions.navigate({
+                            routeName: "Home",
+                        })
+                    ]
+                });
+                this.props.navigation.dispatch(resetAction);
+            })
+            //console.log(response.data)
 
-            //1this.props.navigation.navigate("Home")
+        }).catch(err => {
+            Alert.alert('Failed', err.response.data.message)
+            //console.log(err)
         })
-    }).catch(err => {
-        ToastAndroid.show(err.message, ToastAndroid.SHORT)
-    })
-    // axios.post("http://192.168.8.100:3000/user/login", {
-    //     emailAddress: this.state.emailAddress,
-    //     password: this.state.password
-    // }).then(response => {
-    //     return response.json()
-    // }).catch(result => {
-    //     console.log(result)
-    // }).catch(err => {
-    //     console.log(err)
-    // })
-    // fetch("http://192.168.8.100:3000/user/login", {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //         emailAddress: this.state.emailAddress,
-    //         password: this.state.password
-    //     }),
-    //     headers:{
-    //         "content-type": "application/json"
-    //     }
-    // }).then(response => response.json())
-    // .then(jsonResult => {
-    //     console.log(jsonResult)
-    //     ToastAndroid.show(jsonResult.message, ToastAndroid.SHORT)
-    // }).catch(err => {
-    //     console.log(err)
-    // })
-    
 }
 
-function validateInput () {
-    if(this.state.emailAddress == ""){
-        this.setState({ inputContainer: {
-            flexDirection: 'row',
-            borderRadius: 30,
-            backgroundColor: 'rgba(255, 255, 255, 0.3)',
-            alignItems: 'center',
-            marginBottom: 20,
-            borderColor: 'white',
-            borderWidth: 1
-        }})
-        this.setState({
-            errorMessage: "required"
-        })
+function validateInput() {
+
+    let isPassedValidation = true;
+
+    if (this.state.emailAddress === "") {
+        Alert.alert('Oops!, Login failed', "Email address field is required")
+        isPassedValidation = false
+    } else if (this.state.password === "") {
+        Alert.alert('Oops!, Login failed', "Password field is required")
+        isPassedValidation = false
     }
+
+    if (isPassedValidation) {
+        this.login()
+    }
+
 }
 
-function getStarted () {
-   //ToastAndroid.show(this.state.emailAddress, ToastAndroid.SHORT)
-   AsyncStorage.setItem("isLogin", "true").then(result => {
-       console.log(result)
-   }).catch(error => {
-       console.log(error)
-   })
+function getStarted() {
+    //ToastAndroid.show(this.state.emailAddress, ToastAndroid.SHORT)
+    AsyncStorage.setItem("isLogin", "true").then(result => {
+        console.log(result)
+    }).catch(error => {
+        console.log(error)
+    })
 }
 
 const styles = StyleSheet.create({
@@ -217,11 +208,11 @@ const styles = StyleSheet.create({
         color: 'white'
     },
     skipButton: {
-        backgroundColor:'rgba(255,255,255,0)',
+        backgroundColor: 'rgba(255,255,255,0)',
         marginRight: 10,
         borderRadius: 5,
         borderWidth: 0.5,
-        borderColor: 'white'        
+        borderColor: 'white'
     },
     errorMessage: {
         marginBottom: 5,

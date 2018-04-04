@@ -29,7 +29,7 @@ export default class Buyer extends Component {
                 <View
                     style={{
                         alignItems: "center",
-                        flex: 1, marginTop: Dimensions.get("window").height / 20
+                        flex: 1, marginTop: 10
                     }}>
                     <TouchableOpacity style={styles.container}
                         onPress={() => { this.props.screenProps.navigate('Purchases') }}>
@@ -42,7 +42,7 @@ export default class Buyer extends Component {
                 <View
                     style={{
                         alignItems: "center",
-                        flex: 1, marginTop: Dimensions.get("window").height / 20
+                        flex: 1, marginTop: 10
                     }}>
                     <TouchableOpacity style={{
                         marginRight: 10 ,

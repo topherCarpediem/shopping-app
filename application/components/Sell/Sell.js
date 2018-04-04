@@ -55,7 +55,7 @@ export default class Sell extends Component {
         }
 
         AsyncStorage.getItem("token").then(token => {
-            console.log(token)
+            //console.log(token)
             this.setState({
                 token: token
             })
@@ -89,14 +89,15 @@ export default class Sell extends Component {
             this.setState({
                 categories: result.data
             })
-            console.log(this.state.categories)
+            //console.log(this.state.categories)
         }).catch(err => {
-            console.log(err)
+            //console.log(err)
+            Alert.alert('Error', 'Unable to load categories')
         })
 
 
         this.backHandler = BackHandler.addEventListener("hardwareBackPress", () => {
-            console.log("back handler clicked")
+            //console.log("back handler clicked")
             //let exit = false
             Alert.alert(
                 `Oops!, Continue?`,
@@ -268,7 +269,7 @@ export default class Sell extends Component {
                             placeholder="0 peso(s)"
                             keyboardType="numeric"
                             style={{ flex: 2 }}
-                            onChangeText={text => { this.setState({ productPrice: text }) }}
+                            onChangeText={text => { this.setState({ productPrice:  text }) }}
                             underlineColorAndroid="transparent" />
                     </View>
                     <View style={styles.inputContainer}>
@@ -347,12 +348,14 @@ function prepareFormData(params) {
     formData.append("productPrice", params.productPrice);
     formData.append("avatar", { uri: params.imageURI, name: 'avatar.png', type: 'image/png' });
     formData.append("productDescription", params.productDescription);
+    formData.append("categoryId", params.category)
     formData.append("stocks", params.stocks);
     formData.append("tags", JSON.stringify(tags))
     return formData
 }
 
 function sendRequests() {
+    
     let errorMessage = ""
     if (this.state.productName === null || this.state.productName === "") {
         errorMessage = "Product name is not provided."
@@ -385,7 +388,7 @@ function sendRequests() {
         loading: true
     })
     const formData = prepareFormData(this.state)
-    console.log(formData)
+    //console.log(formData)
     axios({
         url: `${apiUri}/product/add`,
         method: "POST",
@@ -395,10 +398,10 @@ function sendRequests() {
         },
         data: formData,
         onUploadProgress: progress => {
-            console.log(progress)
+            //console.log(progress)
         }
     }).then(result => {
-        console.log(result)
+        //console.log(result)
         setTimeout(() => {
             this.setState({
                 loading: false
@@ -407,13 +410,13 @@ function sendRequests() {
         
     
     }).catch(err => {
-        console.log(err.response)
+        //console.log(err.response)
         setTimeout(() => {
             this.setState({
                 loading: false
             })
         }, 1000)
-    
+        Alert.alert('Error', err.response.data.message)
     })
 
     // ToastAndroid.show(this.state.imageURI, ToastAndroid.SHORT)

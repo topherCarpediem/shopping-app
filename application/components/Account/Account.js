@@ -17,11 +17,38 @@ import axios from "axios";
 import { apiUri } from "../../../config";
 
 import Buyer from "./Buyer";
-import Seller from "./Seller"
+import Seller from "./Seller";
+
 import Purchases from "./Purchases";
 import Profile from "./Profile";
 import Track from "./Track";
+import Income from "./Income";
+import MyProducts from "./MyProducts";
+import PickUp from "./PickUp";
 
+const transitionConfig = () => {
+    return {
+      transitionSpec: {
+        duration: 750,
+        easing: Easing.out(Easing.poly(4)),
+        timing: Animated.timing,
+        useNativeDriver: true,
+      },
+      screenInterpolator: sceneProps => {      
+        const { layout, position, scene } = sceneProps
+  
+        const thisSceneIndex = scene.index
+        const width = layout.initWidth
+  
+        const translateX = position.interpolate({
+          inputRange: [thisSceneIndex - 1, thisSceneIndex],
+          outputRange: [width, 0],
+        })
+  
+        return { transform: [ { translateX } ] }
+      },
+    }
+  }
 
 const AccountTab = TabNavigator(
     {
@@ -66,10 +93,9 @@ class Account extends Component {
     render() {
         return (
             <View style={{ flex: 1 }}>
-                
-                    <View style={{ backgroundColor: "black", height: 140 }}>
+                    {/* <View style={{ backgroundColor: "black", height: 140 }}>
                         <Image />
-                    </View>
+                    </View> */}
                     <AccountTab screenProps={this.props.navigation} />
                 
             </View>
@@ -92,9 +118,18 @@ export default AccountStack = StackNavigator({
     },
     Track: {
         screen: Track
+    },
+    Income: {
+        screen: Income
+    },
+    MyProducts: {
+        screen: MyProducts
+    },
+    PickUp: {
+        screen: PickUp
     }
 },{
-    transitionConfig: () => ({ screenInterpolator: () => null }),
+    transitionConfig: transitionConfig,
 })
 
 

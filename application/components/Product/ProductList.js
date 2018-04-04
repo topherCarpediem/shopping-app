@@ -12,7 +12,7 @@ export default class ProductList extends Component {
 
         this.state = {
             data: [],
-            token: "",
+            
             id: "",
             refreshing: false
         }
@@ -22,11 +22,7 @@ export default class ProductList extends Component {
 
 
     componentWillMount() {
-        const { params } = this.props.navigation.state
-
-        this.setState({
-            token: params.token
-        })
+        
     }
 
     componentDidMount() {
@@ -34,7 +30,6 @@ export default class ProductList extends Component {
         axios.get(`${apiUri}/product/page/1`, {
             headers: {
                 "Content-type": "application/json",
-                "Authorization": `Bearer ${this.state.token}`
             }
         }).then(result => {
             this.setState({
@@ -106,7 +101,7 @@ export default class ProductList extends Component {
                             cardPrice={item.productPrice}
                             cardRating={50}
                             cardImage={item.imageCover}
-                            cardCredentials={this.state.token}
+                            //cardCredentials={this.state.token}
                         />
                     </TouchableOpacity>
                 }

@@ -42,9 +42,9 @@ export default class Purchases extends Component {
                         ...result.data
                     ]
                 })
-                console.log(result.data)
+                //console.log(result.data)
             }).catch(err => {
-                console.log(err)
+                Alert.alert('Error', err.response.data.message)
             })
         })
     }
@@ -74,6 +74,7 @@ export default class Purchases extends Component {
     render() {
         return (
             <View style={{ flex: 1 }}>
+                
                 <FlatList
                     refreshing={this.state.refreshing}
                     onRefresh={() => { }}
@@ -100,7 +101,7 @@ export default class Purchases extends Component {
                                 <View style={{ padding: 10, flex: 1 }}>
                                     <Text>{item.product.productName}</Text>
                                     <Text>Quantity: {item.quantity}</Text>
-                                    <Text style={{ fontWeight: 'bold', color: "#e74c3c" }}>Price: &#8369; {item.product.productPrice}</Text>
+                                    <Text style={{ fontWeight: 'bold', color: "#e74c3c" }}>Price: &#8369; {item.product.productPrice * item.quantity}</Text>
                                 </View>
 
                                 <View style={{ flex: 1, justifyContent: "center" }}>

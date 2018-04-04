@@ -77,7 +77,6 @@ export default class Product extends Component {
                         })
                     }, 2000)
 
-                    //Alert.alert('get', this.state.data.id)
                 }).catch(err => {
                     Alert.alert(`Oops! Somethings wrong!`, `Error code: ${err.response.status}. ${err.response.data.message}`)
                 })

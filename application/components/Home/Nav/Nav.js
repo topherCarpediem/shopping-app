@@ -1,7 +1,7 @@
 import React from "react";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { TabNavigator, TabBarBottom, NavigationActions } from 'react-navigation';
-import { View, Text } from "react-native";
+import { View, Text, AsyncStorage, Dimensions } from "react-native";
 import Home from "../Home";
 import Account from "../../Account/Account"
 import Sell from "../../Sell/Sell"
@@ -19,6 +19,7 @@ export default TabNavigator(
 
   },
   {
+
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
@@ -44,54 +45,70 @@ export default TabNavigator(
     tabBarComponent: ({ jumpToIndex, ...props }) => (
       <TabBarBottom
         {...props}
-        jumpToIndex={index => {
-          if (index === 1) {
-            console.log(`Index ${index}`)
+        jumpToIndex={ async (index) => {
+          
+          let token = null
 
-            let options = {
-              title: 'Select Photo of Product',
-              takePhotoButtonTitle: "Take photo",
-              chooseFromLibraryButtonTitle: "Choose from Library",
-              storageOptions: {
-                skipBackup: true,
-                path: 'images'
-              }
-            };
-
-            ImagePicker.showImagePicker(options, (response) => {
-
-              if (response.didCancel) {
-                console.log('User cancelled image picker');
-              }
-              else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-              }
-              else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-              }
-              else {
-
-
-                Crop.openCropper({
-                  path: response.uri,
-                  width: 300,
-                  height: 400
-                }).then(image => {
-                  let source = { uri: image.path };
-                  //console.log(image);
-
-                  let navigationAction = NavigationActions.navigate({
-                    routeName: "Sell",
-                    params: source
-                  })
-                  props.navigation.dispatch(navigationAction)
-                });
-              }
-            });
-          } else {
-            currentIndex = index
-            jumpToIndex(index)
+          try {
+            token = await AsyncStorage.getItem("token")  
+          } catch (error) {
+            console.log(error)
           }
+          
+
+          if (token !== null) {
+            if (index === 1) {
+              console.log(`Index ${index}`)
+
+              let options = {
+                title: 'Select Photo of Product',
+                takePhotoButtonTitle: "Take photo",
+                chooseFromLibraryButtonTitle: "Choose from Library",
+                storageOptions: {
+                  skipBackup: true,
+                  path: 'images',
+                }
+              };
+
+              ImagePicker.showImagePicker(options, (response) => {
+
+                if (response.didCancel) {
+                  console.log('User cancelled image picker');
+                }
+                else if (response.error) {
+                  console.log('ImagePicker Error: ', response.error);
+                }
+                else if (response.customButton) {
+                  console.log('User tapped custom button: ', response.customButton);
+                }
+                else {
+
+                  Crop.openCropper({
+                    path: response.uri,
+                    width: Dimensions.get("window").width,
+                    height: 300
+                  }).then(image => {
+                    let source = { uri: image.path };
+                    //console.log(image);
+                    let navigationAction = NavigationActions.navigate({
+                      routeName: "Sell",
+                      params: source
+                    })
+                    props.navigation.dispatch(navigationAction)
+                  });
+                }
+              });
+            } else {
+              currentIndex = index
+              jumpToIndex(index)
+            }
+          } else {
+            let navigationAction = NavigationActions.navigate({
+              routeName: "Login"
+            })
+            props.navigation.dispatch(navigationAction)
+          }
+
         }}
       />
     ),

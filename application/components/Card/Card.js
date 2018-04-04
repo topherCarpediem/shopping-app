@@ -31,9 +31,6 @@ export default class CardView extends Component {
                 <Image
                     source={{
                         uri: this.props.cardImage,
-                        headers: {
-                            "Authorization": `Bearer ${this.props.cardCredentials}`
-                        }
                     }}
                     style={this.state.image}
                 />
