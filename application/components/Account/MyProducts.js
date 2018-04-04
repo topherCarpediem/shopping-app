@@ -1,5 +1,17 @@
 import React, { Component } from "react";
-import { View, Text, Image, AsyncStorage, FlatList, TouchableOpacity, Modal, ActivityIndicator, StyleSheet, TextInput } from "react-native";
+import {
+    View,
+    Text,
+    Image,
+    AsyncStorage,
+    FlatList,
+    TouchableOpacity,
+    Modal,
+    ActivityIndicator,
+    StyleSheet,
+    TextInput,
+    Alert
+} from "react-native";
 
 import axios from "axios";
 import { apiUri } from "../../../config";
@@ -20,7 +32,14 @@ export default class MyProducts extends Component {
             productPrice: "",
             stocks: 0,
             isActive: 0,
-            product: []
+            product: {
+                productPrice: "",
+                productName: "",
+                stocks: 0,
+                isActive: 0,
+                productDescription: ""
+            },
+            loading: false
 
         }
     }
@@ -95,46 +114,107 @@ export default class MyProducts extends Component {
     }
 
     _onEditPress(item) {
-        console.log(item)
+        //console.log(item)
         this.setState({
-            product: [
-                item
-            ],
+            product: {
+                ...item
+            },
             modalVisible: true
         })
     }
 
     _onTextChange(key, value) {
-        const resutlt = this.state.product.map(product => {
-            switch (key) {
-                case "productName":
-                    product.productName = value
-                    break;
+        const product = this.state.product
+        switch (key) {
 
-                case "productPrice":
-                    product.productPrice = value
-                    break;
+            case "productName":
+                product.productName = value
+                break;
+            
+            case "productDescription":
+                product.productDescription = value
+                break;
 
-                case "stocks":
-                    product.stocks = value
-                    break;
+            case "productPrice":
+                product.productPrice = value
+                break;
 
-                case "isActive":
-                    product.isActive = value
-                    break;
+            case "stocks":
+                product.stocks = value
+                break;
+
+            case "isActive":
+                product.isActive = value
+                break;
+
+            default:
+                break;
+        }
 
 
-                default:
-                    break;
-            }
-            return product
-        })
         this.setState({
-            product: [
-                ...resutlt
-            ]
+            product: {
+                ...product
+            }
         })
-        console.log(resutlt)
+        //console.log(product)
+
+    }
+
+    _onConfirm() {
+        const product = this.state.product
+        let isValidInput = true
+        let errorMessage = ""
+
+        if (product.productName === "") {
+            isValidInput = false
+            errorMessage = "Product name cannot be null"
+        } else if (product.productPrice === "") {
+            isValidInput = false
+            errorMessage = "Product price name cannot be null"
+        } else if (product.stocks === "") {
+            isValidInput = false
+            errorMessage = "Stocks cannot be null"
+        } else if (product.isActive === "") {
+            isValidInput = false
+            errorMessage = "Active cannot be null"
+        }  else if (product.productDescription === "") {
+            isValidInput = false
+            errorMessage = "Product description cannot be null"
+        }
+
+        if (isValidInput) {
+            Alert.alert('Update product info', 'This action will update the product info based on the fields provided, Continue?',
+                [
+                    {
+                        text: 'YES', onPress: () => {
+                            const { isActive, productName, productPrice, stocks, productDescription } = this.state.product
+                            this.setState({ loading: true })
+                            axios.put(`${apiUri}/product/edit/${this.state.product.id}`,
+                                {
+                                    productName,
+                                    productPrice,
+                                    stocks,
+                                    isActive,
+                                    productDescription
+                                }, {
+                                    headers: {
+                                        "Content-type": "application/json",
+                                        "Authorization": `Bearer ${this.state.token}`
+                                    }
+                                }).then(result => {
+                                    
+                                    this.setState({ loading: true, modalVisible: false })
+                                }).catch(err => {
+                                    Alert.alert('Oops! Somethings wrong', err.response.data.message)
+                                })
+                        }
+                    },
+                    { text: 'NO' }
+                ])
+        } else {
+            Alert.alert('Oops! Somethings wrong', errorMessage)
+        }
 
     }
 
@@ -154,10 +234,10 @@ export default class MyProducts extends Component {
                                     source={{
                                         uri: item.imageCover
                                     }}
-                                    style={{ width: 100, height: 100 }}
+                                    style={{ width: 120, height: 120 }}
                                 />
-                                <View style={{ margin: 10 }}>
-                                    <Text>{item.productName}</Text>
+                                <View style={{ margin: 10, flexWrap: "nowrap" }}>
+                                    <Text style={{  }}>{item.productName}</Text>
                                     <Text>Stocks: {item.stocks} piece(s)</Text>
                                     <Text>&#8369; {item.productPrice}</Text>
                                     <TouchableOpacity
@@ -167,9 +247,12 @@ export default class MyProducts extends Component {
                                             flexDirection: "row",
                                             alignItems: "center",
                                             justifyContent: "center",
+                                            paddingLeft: 20,
+                                            paddingRight: 20,
                                             padding: 5,
                                             borderRadius: 5,
-                                            marginTop: 5
+                                            marginTop: 5,
+                                            alignSelf: "flex-start"
                                         }} >
                                         <Icon name="edit" size={16} color="white" />
                                         <Text style={{ color: "white" }}> Edit</Text>
@@ -187,50 +270,66 @@ export default class MyProducts extends Component {
                     animationType="fade"
                     onRequestClose={() => { }}
                     visible={this.state.modalVisible}>
-                    <View style={{ flex: 0.8, backgroundColor: "black", opacity: 0.6 }}></View>
+                    {/* <View style={{ flex: 0, backgroundColor: "black", opacity: 0.6 }}></View> */}
                     <View style={{ backgroundColor: "white", flex: 1 }}>
                         <View style={{ padding: 10 }}>
-                            {this.state.product.map(product => {
-                                return (
-                                    <View >
-                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                            <Text>Product name</Text>
-                                            <TextInput
-                                                value={product.productName}
-                                                onChangeText={(text) => { this._onTextChange("productName", text) }}
-                                            />
 
-                                        </View>
-                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                            <Text>Price</Text>
-                                            <TextInput
-                                                keyboardType="numeric"
-                                                value={product.productPrice.toString()}
-                                                onChangeText={(text) => { this._onTextChange("productPrice", text) }}
-                                            />
-                                        </View>
-                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <View >
+                                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                    <Text style={{ flex: 1 }}>Product name</Text>
+                                    <TextInput
+                                        style={{ flex: 2 }}
+                                        value={this.state.product.productName}
+                                        onChangeText={(text) => { this._onTextChange("productName", text) }}
+                                    />
 
-                                            <Text>Stocks</Text>
-                                            <TextInput
-                                                keyboardType="numeric"
-                                                value={product.stocks.toString()}
-                                                onChangeText={(text) => { this._onTextChange("stocks", text) }}
-                                            />
+                                </View>
 
-                                        </View>
+                                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                    <Text style={{ flex: 1 }}>Product name</Text>
+                                    <TextInput
+                                        multiline={true}
+                                        
+                                        style={{ flex: 2, minHeight: 60, maxHeight: 100 }}
+                                        value={this.state.product.productDescription}
+                                        onChangeText={(text) => { this._onTextChange("productDescription", text) }}
+                                    />
 
-                                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                            <Text>Status</Text>
-                                            <TextInput
-                                                keyboardType="numeric"
-                                                value={product.isActive.toString()}
-                                                onChangeText={(text) => { this._onTextChange("isActive", text) }}
-                                            />
-                                        </View>
-                                    </View>
-                                )
-                            })}
+                                </View>
+
+                                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                    <Text style={{ flex: 1 }}>Price</Text>
+                                    <TextInput
+                                        style={{ flex: 2 }}
+                                        keyboardType="numeric"
+                                        value={this.state.product.productPrice.toString()}
+                                        onChangeText={(text) => { this._onTextChange("productPrice", text) }}
+                                    />
+                                </View>
+                                <View style={{ flexDirection: "row", alignItems: "center" }}>
+
+                                    <Text style={{ flex: 1 }}>Stocks</Text>
+                                    <TextInput
+                                        style={{ flex: 2 }}
+                                        keyboardType="numeric"
+                                        value={this.state.product.stocks.toString()}
+                                        onChangeText={(text) => { this._onTextChange("stocks", text) }}
+                                    />
+
+                                </View>
+
+                                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                    <Text style={{ flex: 1 }}>Active</Text>
+                                    <TextInput
+                                        style={{ flex: 2 }}
+                                        keyboardType="numeric"
+                                        value={this.state.product.isActive.toString()}
+                                        onChangeText={(text) => { this._onTextChange("isActive", text) }}
+                                    />
+                                </View>
+                            </View>
+
+
                         </View>
 
                         <View
@@ -249,7 +348,10 @@ export default class MyProducts extends Component {
                             </View>
 
                             <View style={{ backgroundColor: '#e74c3c', flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                <TouchableOpacity style={{ padding: 18 }} >
+                                <TouchableOpacity
+                                    onPress={() => { this._onConfirm() }}
+                                    style={{ padding: 18 }}
+                                >
                                     <Text style={{ color: "white", fontSize: 15 }}>CONFIRM</Text>
                                 </TouchableOpacity>
                             </View>
@@ -258,9 +360,29 @@ export default class MyProducts extends Component {
 
                     </View>
 
-
+                {this.state.loading &&
+                    <View style={styles.loading}>
+                        <View style={{ backgroundColor: "white", padding: 20, borderRadius: 5 }}>
+                            <ActivityIndicator size={80} color="#e74c3c" />
+                        </View>
+                    </View>
+                }
                 </Modal>
-            </View>
+            </View >
         )
     }
 }
+
+const styles = StyleSheet.create({
+    loading: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        opacity: 0.8,
+        backgroundColor: 'black',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
+})
