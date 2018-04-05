@@ -13,7 +13,8 @@ import {
     TextInput,
     ActivityIndicator,
     StatusBar,
-
+    FlatList,
+    RefreshControl
 } from "react-native";
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -24,6 +25,7 @@ import axios from "axios";
 
 
 import { apiUri } from "../../../config";
+import Card from "../Card/Card";
 
 export default class Product extends Component {
     constructor(prop) {
@@ -36,7 +38,8 @@ export default class Product extends Component {
             modalVisible: false,
             quantity: 1,
             price: 0,
-            loading: false
+            loading: false,
+            recommendation: []
         }
 
         this.incrementQuantity = this.incrementQuantity.bind(this)
@@ -77,10 +80,20 @@ export default class Product extends Component {
                         })
                     }, 2000)
 
+                    return axios.get(`${apiUri}/product/recommendation/${this.state.id}`, {
+                        headers: {
+                            "Content-type": "application/json",
+                        }
+                    })
+
+                }).then(result => {
+                    this.setState({
+                        recommendation: [...result.data]
+                    })
+
                 }).catch(err => {
                     Alert.alert(`Oops! Somethings wrong!`, `Error code: ${err.response.status}. ${err.response.data.message}`)
                 })
-
             })
     }
 
@@ -104,8 +117,6 @@ export default class Product extends Component {
                 color: 'white',
             },
             headerTintColor: 'white',
-
-
         }
     };
 
@@ -118,7 +129,6 @@ export default class Product extends Component {
     }
 
     addToCart() {
-
         Alert.alert('Continue?', 'Do you want to add product to the cart?',
             [
                 {
@@ -157,8 +167,7 @@ export default class Product extends Component {
 
 
                             }).catch(err => {
-                                console.log(err.name)
-                                console.log(err.response)
+
 
                                 setTimeout(() => {
                                     this.setLoadingVisible(false)
@@ -194,6 +203,14 @@ export default class Product extends Component {
         }
     }
 
+    _onPress(item) {
+        //console.log(item)
+        this.props.navigation.navigate("Product", {
+            productId: item.id,
+            title: item.productName
+        })
+    }
+
 
 
     render() {
@@ -207,6 +224,7 @@ export default class Product extends Component {
 
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1 }}>
+
                     <View style={{ height: 350 }}>
                         <View style={{ flex: 1 }}>
                             <Swiper
@@ -237,15 +255,58 @@ export default class Product extends Component {
 
                     <View style={{ padding: 10, marginTop: 10, backgroundColor: "white" }}>
                         <Text style={{ fontSize: 15, fontWeight: 'bold' }}>Feedbacks {"\n"}</Text>
-
+                        {/* {
+                            this.state.token !== null &&
+                            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                
+                                <TextInput style={{ flex: 4 }} />
+                                <TouchableOpacity
+                                    style={{ flex: 1, alignItems: "center", backgroundColor: "#e74c3c", padding: 10 }} >
+                                    <Text style={{ color: "white" }}>Post</Text>
+                                </TouchableOpacity>
+                            </View>
+                        } */}
                     </View>
 
-                    <View style={{ padding: 10, marginTop: 10, backgroundColor: "white", marginBottom: 70 }}>
+                    <View style={{ padding: 10, marginTop: 10, backgroundColor: "white" }}>
                         <Text style={{ fontSize: 15, fontWeight: 'bold' }}>You might also like {"\n"}</Text>
+                    </View>
+                    <View style={{ marginBottom: 70 }}>
+                        <FlatList
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={this.state.refreshing}
+                                    onRefresh={() => { console.log("refresh the list") }}
+                                    title="Pull to refresh"
+                                    tintColor="#e74c3c"
+                                    titleColor="#e74c3c"
 
+                                />
+                            }
+                            onEndReached={(info) => { console.log(info) }}
+                            horizontal={true}
+                            data={this.state.recommendation}
+                            keyExtractor={(item) => item.id}
+                            renderItem={({ item }) =>
+                                <TouchableOpacity
+
+                                    onPress={() => this._onPress(item)}>
+                                    <Card
+                                        cardTitle={item.productName}
+                                        cardPrice={item.productPrice}
+                                        cardRating={50}
+                                        cardImage={item.imageCover}
+                                    />
+                                </TouchableOpacity>
+                            }
+                        />
                     </View>
 
                 </ScrollView>
+
+
+
+
 
                 <View style={styles.container}>
                     <View style={styles.items}>

@@ -12,14 +12,13 @@ import Cart from "../../Cart/Cart";
 
 export default TabNavigator(
   {
-    Home: { screen: Home },
+    Home: { screen: Home, navigationOptions: { tabBarLabel:  'Home'} },
     Sell: { screen: Sell },
     Cart: { screen: Cart },
     Account: { screen: Account },
 
   },
   {
-
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;

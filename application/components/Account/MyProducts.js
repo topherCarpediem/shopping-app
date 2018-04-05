@@ -130,7 +130,7 @@ export default class MyProducts extends Component {
             case "productName":
                 product.productName = value
                 break;
-            
+
             case "productDescription":
                 product.productDescription = value
                 break;
@@ -178,7 +178,7 @@ export default class MyProducts extends Component {
         } else if (product.isActive === "") {
             isValidInput = false
             errorMessage = "Active cannot be null"
-        }  else if (product.productDescription === "") {
+        } else if (product.productDescription === "") {
             isValidInput = false
             errorMessage = "Product description cannot be null"
         }
@@ -203,7 +203,7 @@ export default class MyProducts extends Component {
                                         "Authorization": `Bearer ${this.state.token}`
                                     }
                                 }).then(result => {
-                                    
+
                                     this.setState({ loading: true, modalVisible: false })
                                 }).catch(err => {
                                     Alert.alert('Oops! Somethings wrong', err.response.data.message)
@@ -237,7 +237,7 @@ export default class MyProducts extends Component {
                                     style={{ width: 120, height: 120 }}
                                 />
                                 <View style={{ margin: 10, flexWrap: "nowrap" }}>
-                                    <Text style={{  }}>{item.productName}</Text>
+                                    <Text style={{}}>{item.productName}</Text>
                                     <Text>Stocks: {item.stocks} piece(s)</Text>
                                     <Text>&#8369; {item.productPrice}</Text>
                                     <TouchableOpacity
@@ -278,6 +278,7 @@ export default class MyProducts extends Component {
                                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                                     <Text style={{ flex: 1 }}>Product name</Text>
                                     <TextInput
+                                        underlineColorAndroid="#e74c3c"
                                         style={{ flex: 2 }}
                                         value={this.state.product.productName}
                                         onChangeText={(text) => { this._onTextChange("productName", text) }}
@@ -289,8 +290,8 @@ export default class MyProducts extends Component {
                                     <Text style={{ flex: 1 }}>Product name</Text>
                                     <TextInput
                                         multiline={true}
-                                        
-                                        style={{ flex: 2, minHeight: 60, maxHeight: 100 }}
+                                        underlineColorAndroid="#e74c3c"
+                                        style={{ flex: 2, minHeight: 60, maxHeight: 100, }}
                                         value={this.state.product.productDescription}
                                         onChangeText={(text) => { this._onTextChange("productDescription", text) }}
                                     />
@@ -300,6 +301,7 @@ export default class MyProducts extends Component {
                                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                                     <Text style={{ flex: 1 }}>Price</Text>
                                     <TextInput
+                                        underlineColorAndroid="#e74c3c"
                                         style={{ flex: 2 }}
                                         keyboardType="numeric"
                                         value={this.state.product.productPrice.toString()}
@@ -310,6 +312,7 @@ export default class MyProducts extends Component {
 
                                     <Text style={{ flex: 1 }}>Stocks</Text>
                                     <TextInput
+                                        underlineColorAndroid="#e74c3c"
                                         style={{ flex: 2 }}
                                         keyboardType="numeric"
                                         value={this.state.product.stocks.toString()}
@@ -321,6 +324,7 @@ export default class MyProducts extends Component {
                                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                                     <Text style={{ flex: 1 }}>Active</Text>
                                     <TextInput
+                                        underlineColorAndroid="#e74c3c"
                                         style={{ flex: 2 }}
                                         keyboardType="numeric"
                                         value={this.state.product.isActive.toString()}
@@ -360,13 +364,13 @@ export default class MyProducts extends Component {
 
                     </View>
 
-                {this.state.loading &&
-                    <View style={styles.loading}>
-                        <View style={{ backgroundColor: "white", padding: 20, borderRadius: 5 }}>
-                            <ActivityIndicator size={80} color="#e74c3c" />
+                    {this.state.loading &&
+                        <View style={styles.loading}>
+                            <View style={{ backgroundColor: "white", padding: 20, borderRadius: 5 }}>
+                                <ActivityIndicator size={80} color="#e74c3c" />
+                            </View>
                         </View>
-                    </View>
-                }
+                    }
                 </Modal>
             </View >
         )

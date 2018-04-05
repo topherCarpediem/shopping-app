@@ -30,6 +30,7 @@ import Product from "../Product/Product";
 import Splash from "./Splash";
 import ProductList from "../Product/ProductList";
 import Cart from "../Cart/Cart";
+import CategoryView from "../Category/CategoryView";
 
 
 class Home extends Component {
@@ -85,7 +86,7 @@ class Home extends Component {
                         </View>
 
                         <View style={{ height: 250 }}>
-                            <Category />
+                            <Category navigation={this.props.navigation}/>
                         </View>
 
                         <View style={{ marginTop: 38 }}>
@@ -175,6 +176,9 @@ export default StackNavigator(
         },
         CartStack: {
             screen: Cart
+        },
+        CategoryView: {
+            screen: CategoryView
         }
     }, {
         transitionConfig: transitionConfig,

@@ -22,26 +22,13 @@ export default class ProductList extends Component {
 
 
     componentWillMount() {
-        
+        this.setState({ refreshing: true });
+        this._fetchProductList()
     }
 
     componentDidMount() {
 
-        axios.get(`${apiUri}/product/page/1`, {
-            headers: {
-                "Content-type": "application/json",
-            }
-        }).then(result => {
-            this.setState({
-                data: [
-                    ...this.state.data,
-                    ...result.data
-                ]
-            })
-        }).catch(err => {
-            //console.log(err.response)
-            Alert.alert(err.response.data.message, err.response.data.reason)
-        })
+        
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -71,6 +58,34 @@ export default class ProductList extends Component {
         })
     }
 
+    _fetchProductList(){
+        axios.get(`${apiUri}/product/page/1`, {
+            headers: {
+                "Content-type": "application/json",
+            }
+        }).then(result => {
+            this.setState({
+                data: [
+                    ...this.state.data,
+                    ...result.data
+                ]
+            })
+            this.setState({ refreshing: false });
+        }).catch(err => {
+            //console.log(err.response)
+            switch (err.response) {
+                case null:
+                    Alert.alert('Error', err.message)
+                    break;            
+                default:
+                    Alert.alert('Error', err.response.data.message)
+                    break;
+            }
+            this.setState({ refreshing: false });
+        })
+
+    }
+
     render() {
         return (
             <View >
@@ -80,7 +95,7 @@ export default class ProductList extends Component {
                 refreshControl={
                     <RefreshControl
                         refreshing={this.state.refreshing}
-                        onRefresh={() => { console.log("refresh the list")}}
+                        onRefresh={() => { this._fetchProductList() }}
                         title="Pull to refresh"
                         tintColor="#e74c3c"
                         titleColor="#e74c3c"

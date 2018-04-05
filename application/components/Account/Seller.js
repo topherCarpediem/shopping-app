@@ -56,7 +56,7 @@ export default class Seller extends Component {
                             justifyContent: "center",
                             alignItems: "center"
                         }}
-                            onPress={() => { this.props.screenProps.navigate('Profile') }}>
+                            onPress={() => { this.props.screenProps.navigate('PickUp') }}>
                             <MaterialCommunityIcons name="truck-delivery" size={90} color="white" />
                             <Text style={{ color: "white", fontSize: 17 }}>Pick Up Item</Text>
                         </TouchableOpacity>
