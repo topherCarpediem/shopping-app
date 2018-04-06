@@ -46,6 +46,17 @@ export default class Cart extends Component {
                 token
             })
             this.getCartItem()
+
+            axios.get(`${apiUri}/user/profile`, {
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${this.state.token}`
+                }
+            }).then(result => {
+
+            }).catch(err => {
+                
+            })
         })
     }
 

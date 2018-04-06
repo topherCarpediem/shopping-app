@@ -91,6 +91,12 @@ export default class Product extends Component {
                         recommendation: [...result.data]
                     })
 
+                    // return axios.get(`${apiUri}/feedback/${this.state.id}`, {
+                    //     headers: {
+                    //         "Content-type": "application/json",
+                    //     }
+                    // })
+
                 }).catch(err => {
                     Alert.alert(`Oops! Somethings wrong!`, `Error code: ${err.response.status}. ${err.response.data.message}`)
                 })
@@ -147,7 +153,7 @@ export default class Product extends Component {
                                     "Authorization": `Bearer ${this.state.token}`
                                 },
                             }).then(result => {
-                                console.log(result)
+                                //console.log(result)
                                 setTimeout(() => {
                                     this.setLoadingVisible(false)
                                     Alert.alert('Success!', result.data.message,

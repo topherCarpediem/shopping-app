@@ -77,8 +77,10 @@ export default class LoginForm extends Component {
                 </TouchableOpacity>
 
                 <View style={styles.textContainer}>
-                    <Text style={{ flex: 1, fontSize: 18, color: "white", paddingLeft: 10 }}>Create Account</Text>
-
+                    <TouchableOpacity 
+                        onPress={() => { this.props.navigation.navigate("Register") }}>
+                    <Text style={{  fontSize: 18, color: "white", paddingLeft: 10 }}>Create Account</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ alignSelf: 'flex-end' }}>
                     <TouchableOpacity

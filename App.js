@@ -8,6 +8,7 @@ import Login from "./application/components/Login/Login";
 import Nav from './application/components/Home/Nav/Nav';
 import Product from './application/components/Product/Product';
 import Splash from "./application/components/Home/Splash";
+import Register from './application/components/Register/Register';
 
 const transitionConfig = () => {
   return {
@@ -47,6 +48,9 @@ const RootStack = StackNavigator(
     },
     Splash: {
       screen: Splash
+    },
+    Register: {
+      screen: Register
     }
   },
   {

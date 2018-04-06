@@ -156,7 +156,9 @@ export default class Sell extends Component {
         return (
             <View style={{ flex: 1}}>
                 
-            <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: "white" }}>
+            <KeyboardAwareScrollView 
+            keyboardShouldPersistTaps="always"
+            style={{ flex: 1, backgroundColor: "white" }}>
                 
                 <View style={{ flexDirection: "row", marginBottom: 10, alignItems: "center", justifyContent: "center", paddingTop: 10 }}>
                     <View style={{ width: 200, height: 200 }}>
