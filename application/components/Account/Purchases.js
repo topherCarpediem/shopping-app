@@ -7,6 +7,7 @@ import {
     Alert,
     TouchableOpacity,
     Image,
+    Dimensions
 } from "react-native";
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -25,27 +26,39 @@ export default class Purchases extends Component {
     }
 
 
-    componentWillMount() {
+    componentDidMount() {
         AsyncStorage.getItem("token").then(token => {
             this.setState({
                 token
             })
 
-            axios.get(`${apiUri}/order/purchases`, {
-                headers: {
-                    "Content-type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                }
-            }).then(result => {
-                this.setState({
-                    data: [
-                        ...result.data
-                    ]
-                })
-                //console.log(result.data)
-            }).catch(err => {
-                Alert.alert('Error', err.response.data.message)
+            this._getPurchases(token)
+        })
+    }
+
+    _getPurchases(token) {
+        token = token === null || token === undefined ? this.state.token : token
+        axios.get(`${apiUri}/order/purchases`, {
+            headers: {
+                "Content-type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        }).then(result => {
+            this.setState({
+                data: [
+                    ...result.data
+                ]
             })
+            //console.log(result.data)
+        }).catch(err => {
+            switch (err.response) {
+                case null:
+                    Alert.alert('Error', err.message)
+                    break;
+                default:
+                    Alert.alert('Error', err.response.data.message)
+                    break;
+            }
         })
     }
 
@@ -68,16 +81,18 @@ export default class Purchases extends Component {
     };
 
 
-
-
-
     render() {
         return (
             <View style={{ flex: 1 }}>
-                
+                {this.state.data.length === 0 &&
+                    <Text style={{
+                        alignSelf: "center",
+                        marginTop: Dimensions.get("window").height / 3
+                    }}>No purchases as of now</Text>
+                }
                 <FlatList
                     refreshing={this.state.refreshing}
-                    onRefresh={() => { }}
+                    onRefresh={this._getPurchases.bind(this)}
                     keyExtractor={(item) => item.id}
                     data={this.state.data}
                     renderItem={({ item }) =>

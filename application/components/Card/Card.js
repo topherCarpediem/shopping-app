@@ -37,7 +37,7 @@ export default class CardView extends Component {
                 <Text style={{margin: 5, marginBottom: 0, fontSize: 16, color: "#171717",}}>{this.props.cardTitle.length > 57 ? this.props.cardTitle.slice(0, 54) + "..." : this.props.cardTitle}</Text>
                 <View style={{ flexDirection: "row", position: "absolute", bottom: 0, margin: 5  }}>
                     <Text style={{ flex:1, color: "#e74c3c"}}>&#8369; {this.props.cardPrice}</Text>
-                    <Text style={{ flex:1, textAlign: "right" }}>{this.props.cardRating}</Text>
+                    {/* <Text style={{ flex:1, textAlign: "right" }}>{this.props.cardRating}</Text> */}
                 </View>
             </View>
 

@@ -410,7 +410,18 @@ function sendRequests() {
             })
         }, 1000)
         
-    
+        this.backHandler.remove()
+
+        const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+              NavigationActions.navigate({
+                routeName: "Home",
+              })
+            ]
+          });
+          
+          this.props.navigation.dispatch(resetAction);
     }).catch(err => {
         //console.log(err.response)
         setTimeout(() => {

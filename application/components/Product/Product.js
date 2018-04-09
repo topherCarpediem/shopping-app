@@ -14,14 +14,15 @@ import {
     ActivityIndicator,
     StatusBar,
     FlatList,
-    RefreshControl
+    RefreshControl,
+    TouchableWithoutFeedback
 } from "react-native";
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Swiper from "react-native-swiper";
 import axios from "axios";
-
+import moment from "moment";
 
 
 import { apiUri } from "../../../config";
@@ -39,7 +40,12 @@ export default class Product extends Component {
             quantity: 1,
             price: 0,
             loading: false,
-            recommendation: []
+            recommendation: [],
+            action: "",
+            fullname: "",
+            shippingAddress: "",
+            phoneNumber: "",
+            feedbacks: []
         }
 
         this.incrementQuantity = this.incrementQuantity.bind(this)
@@ -91,11 +97,16 @@ export default class Product extends Component {
                         recommendation: [...result.data]
                     })
 
-                    // return axios.get(`${apiUri}/feedback/${this.state.id}`, {
-                    //     headers: {
-                    //         "Content-type": "application/json",
-                    //     }
-                    // })
+                    return axios.get(`${apiUri}/feedback/limit/${this.state.id}`, {
+                        headers: {
+                            "Content-type": "application/json",
+                        }
+                    })
+
+                }).then(result => {
+                    this.setState({
+                        feedbacks: result.data
+                    })
 
                 }).catch(err => {
                     Alert.alert(`Oops! Somethings wrong!`, `Error code: ${err.response.status}. ${err.response.data.message}`)
@@ -217,6 +228,75 @@ export default class Product extends Component {
         })
     }
 
+    _buyNow() {
+
+        AsyncStorage.getItem("token").then(token => {
+            if (token === null) {
+
+                this.props.navigation.navigate('Login')
+
+            } else {
+                this.setState({ action: "buy", modalVisible: true })
+
+                axios.get(`${apiUri}/user/profile`, {
+                    headers: {
+                        "Content-type": "application/json",
+                        "Authorization": `Bearer ${this.state.token}`
+                    }
+                }).then(result => {
+                    const userDetails = result.data
+                    const userAddress = userDetails.address
+                    this.setState({
+                        fullname: `${userDetails.firstName} ${userDetails.lastName}`,
+                        shippingAddress: `${userAddress.line1} ${userAddress.line2} ${userAddress.barangay} ${userAddress.city} ${userAddress.province}`,
+                        phoneNumber: `${userAddress.phoneNumber}`
+                    })
+
+                }).catch(err => {
+                    console.log(err)
+                })
+            }
+        })
+    }
+
+    _onPressBuyNow() {
+        this.setState({ loading: true })
+
+        const productDetails = []
+
+        productDetails.push({
+            id: this.state.data.id,
+            quantity: this.state.quantity,
+            shippingAddress: this.state.shippingAddress
+        })
+
+        axios.post(`${apiUri}/order/checkout`,
+            {
+                productDetails: JSON.stringify(productDetails),
+            },
+            {
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${this.state.token}`
+                },
+            }).then(result => {
+                setTimeout(() => {
+                    this.setState({
+                        loading: false
+                    })
+                    Alert.alert('Success', result.data.message)
+                }, 1000)
+
+
+            }).catch(err => {
+                setTimeout(() => {
+                    this.setState({
+                        loading: false
+                    })
+                    Alert.alert('Error', err.response.data.message)
+                }, 1000)
+            })
+    }
 
 
     render() {
@@ -261,17 +341,61 @@ export default class Product extends Component {
 
                     <View style={{ padding: 10, marginTop: 10, backgroundColor: "white" }}>
                         <Text style={{ fontSize: 15, fontWeight: 'bold' }}>Feedbacks {"\n"}</Text>
-                        {/* {
-                            this.state.token !== null &&
-                            <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                
-                                <TextInput style={{ flex: 4 }} />
+
+                        {
+                            this.state.feedbacks.length === 0
+                                ?
+                                <View style={{ justifyContent: "center", alignItems: "center" }} >
+                                    <Text>There is no feedback yet. Be the first?</Text>
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            this.props.navigation.navigate("Feedback", {
+                                                title: this.state.data.productName,
+                                                productId: this.state.id
+                                            })
+                                        }}
+                                        style={{
+                                            backgroundColor: "#e74c3c",
+                                            padding: 10,
+                                            borderRadius: 5,
+                                            width: Dimensions.get('window').width - 20
+                                        }}>
+                                        <Text style={{ textAlign: "center", color: "white" }}>Comment</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                :
+                                this.state.feedbacks.map(feedback => {
+                                    return (
+                                        <View style={{ marginBottom: 10, }}>
+                                            <Text style={{ fontWeight: "bold", color:"#e74c3c" }}>{feedback.user.firstName} {feedback.user.lastName}</Text>
+                                            <Text>{feedback.message}</Text>
+                                            <Text style={{ fontSize: 12 }}>{moment(feedback.created_at).fromNow()}</Text>
+                                        </View>
+                                    )
+                                })
+                        }
+
+                        {
+                            this.state.feedbacks.length !== 0 &&
+                            <View style={{ justifyContent: "center", alignItems: "center" }} >
                                 <TouchableOpacity
-                                    style={{ flex: 1, alignItems: "center", backgroundColor: "#e74c3c", padding: 10 }} >
-                                    <Text style={{ color: "white" }}>Post</Text>
+                                    onPress={() => {
+                                        this.props.navigation.navigate("Feedback", {
+                                            title: this.state.data.productName,
+                                            productId: this.state.id
+                                        })
+                                    }}
+                                    style={{
+                                        backgroundColor: "#e74c3c",
+                                        padding: 10,
+                                        width: Dimensions.get('window').width - 20,
+                                        borderRadius: 5
+                                    }}>
+                                    <Text style={{ textAlign: "center", color: "white" }}>View more</Text>
                                 </TouchableOpacity>
                             </View>
-                        } */}
+                        }
+
                     </View>
 
                     <View style={{ padding: 10, marginTop: 10, backgroundColor: "white" }}>
@@ -310,23 +434,32 @@ export default class Product extends Component {
 
                 </ScrollView>
 
-
-
-
-
                 <View style={styles.container}>
                     <View style={styles.items}>
-                        <TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => {
+                                this.props.navigation.navigate("Chat")
+                            }}
+                        >
                             <Icon name="comments" size={25} color="#e74c3c" />
                             <Text style={{ fontSize: 13, color: "#e74c3c" }}>CHAT</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ flex: 2, alignItems: "center", justifyContent: "center", backgroundColor: "#e74c3c" }}>
+
+                    <TouchableOpacity
+                        onPress={() => { this._buyNow() }}
+                        style={{
+                            flex: 2,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            backgroundColor: "#e74c3c"
+                        }}>
                         <Text style={{ fontSize: 13, color: "white" }}>BUY NOW</Text>
-                    </View>
+                    </TouchableOpacity>
+
                     <View style={styles.items}>
                         <TouchableOpacity
-                            onPress={() => { this.setModalVisible(true) }}>
+                            onPress={() => { this.setModalVisible(true); this.setState({ action: "cart" }) }}>
                             <View style={{ justifyContent: "center", alignItems: "center" }}>
                                 <Icon name="shopping-cart" size={25} color="#e74c3c" />
                                 <Text style={{ fontSize: 13, color: "#e74c3c" }}>ADD TO CART</Text>
@@ -345,8 +478,12 @@ export default class Product extends Component {
                     onRequestClose={() => {
                         this.setModalVisible(false)
                     }}>
-                    <View style={{ flex: 1, backgroundColor: "black", opacity: 0.6 }}>
-                    </View>
+                    {
+                        this.state.action === "cart" && <View style={{ flex: 1, backgroundColor: "black", opacity: 0.6 }}></View>
+
+                    }
+
+
                     <View style={styles.modalContainer}>
 
                         <View style={{ flexDirection: "row", margin: 20 }}>
@@ -387,7 +524,36 @@ export default class Product extends Component {
                                 </View>
 
                             </View>
+
+
+
                         </View>
+                        {this.state.action === "buy" &&
+                            <View style={{ padding: 10, }}>
+                                <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 5 }}>Order Summary</Text>
+                                <View style={{ borderBottomWidth: 1, }}>
+
+                                    <View style={{ flexDirection: "row", borderRightWidth: 1 }}>
+                                        <Text style={{ flex: 3, borderTopWidth: 1, borderLeftWidth: 1, paddingLeft: 5 }}>{this.state.data.productName}</Text>
+                                        <Text style={{ flex: 1, borderTopWidth: 1, borderLeftWidth: 1, textAlign: "center" }}>&#8369; {this.state.price === 0 ? this.state.data.productPrice : this.state.price}</Text>
+                                        <Text style={{ flex: 1, borderTopWidth: 1, borderLeftWidth: 1, textAlign: "center" }}>{this.state.quantity}</Text>
+                                    </View>
+
+                                </View>
+
+
+                                <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 8 }}>Shipping To</Text>
+                                <Text style={{ fontWeight: "bold" }}>Full name</Text>
+                                <Text>{this.state.fullname}</Text>
+                                <Text style={{ fontWeight: "bold" }}>Billing Address</Text>
+                                <Text>{this.state.shippingAddress}</Text>
+                                <Text style={{ fontWeight: "bold" }}>Phone number</Text>
+                                <Text>{this.state.phoneNumber}</Text>
+                                <Text style={{ fontWeight: "bold" }}>Order type</Text>
+                                <Text>Cash on Delivery</Text>
+                                <Text>Total  <Text style={{ fontSize: 20, color: "#e74c3c", fontWeight: "bold" }}>&#8369; {this.state.price === 0 ? this.state.data.productPrice : this.state.price}</Text></Text>
+                            </View>
+                        }
 
                         {/* Buttons add to Cart and Cancel */}
                         <View style={styles.modalButtonContainer}>
@@ -398,9 +564,18 @@ export default class Product extends Component {
                             </View>
 
                             <View style={{ backgroundColor: '#e74c3c', flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                <TouchableOpacity style={{ padding: 18 }} onPress={this.addToCart}>
-                                    <Text style={{ color: "white", fontSize: 15 }}>ADD TO CART</Text>
-                                </TouchableOpacity>
+                                {
+                                    this.state.action === "cart"
+                                        ?
+                                        <TouchableOpacity style={{ padding: 18 }} onPress={this.addToCart}>
+                                            <Text style={{ color: "white", fontSize: 15 }}>ADD TO CART</Text>
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity style={{ padding: 18 }} onPress={() => { this._onPressBuyNow() }}>
+                                            <Text style={{ color: "white", fontSize: 15 }}>BUY NOW</Text>
+                                        </TouchableOpacity>
+                                }
+
                             </View>
 
                         </View>
@@ -408,6 +583,13 @@ export default class Product extends Component {
 
                     </View>
 
+                    {this.state.loading &&
+                        <View style={styles.loading}>
+                            <View style={{ backgroundColor: "white", padding: 20, borderRadius: 5 }}>
+                                <ActivityIndicator size={80} color="#e74c3c" />
+                            </View>
+                        </View>
+                    }
                 </Modal>
 
                 {this.state.loading &&

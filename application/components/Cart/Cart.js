@@ -35,8 +35,11 @@ export default class Cart extends Component {
             loading: false,
             modalLoading: false,
             refreshing: false,
-            modalVisible: false
-
+            modalVisible: false,
+            fullname: "",
+            shippingAddress: "",
+            phoneNumber: "",
+            
         }
     }
 
@@ -53,9 +56,17 @@ export default class Cart extends Component {
                     "Authorization": `Bearer ${this.state.token}`
                 }
             }).then(result => {
-
+                 const userDetails = result.data
+                 const userAddress = userDetails.address
+                this.setState({
+                    fullname: `${userDetails.firstName} ${userDetails.lastName}`,
+                    shippingAddress: `${userAddress.line1} ${userAddress.line2} ${userAddress.barangay} ${userAddress.city} ${userAddress.province}`,
+                    phoneNumber: `${userAddress.phoneNumber}`
+                })
+                //console.log(result.data)
+                //console.log(userDetails)
             }).catch(err => {
-                
+                console.log(err)
             })
         })
     }
@@ -267,7 +278,8 @@ export default class Cart extends Component {
             if (cart.check) {
                 productDetails.push({
                     id: cart.product.id,
-                    quantity: cart.quantity
+                    quantity: cart.quantity,
+                    shippingAddress: this.state.shippingAddress
                 })
             }
         })
@@ -430,11 +442,11 @@ export default class Cart extends Component {
 
                             <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 8 }}>Shipping To</Text>
                             <Text style={{ fontWeight: "bold" }}>Full name</Text>
-                            <Text>Christopher Enriquez</Text>
+                            <Text>{this.state.fullname}</Text>
                             <Text style={{ fontWeight: "bold" }}>Billing Address</Text>
-                            <Text>Shipping Address</Text>
+                            <Text>{this.state.shippingAddress}</Text>
                             <Text style={{ fontWeight: "bold" }}>Phone number</Text>
-                            <Text>09262501012</Text>
+                            <Text>{this.state.phoneNumber}</Text>
                             <Text style={{ fontWeight: "bold" }}>Order type</Text>
                             <Text>Cash on Delivery</Text>
                             <Text>Total  <Text style={{ fontSize: 20, color: "#e74c3c", fontWeight: "bold" }}>&#8369; {this.state.subTotal}</Text></Text>

@@ -35,7 +35,7 @@ export default class PickUp extends Component {
                 token
             })
 
-            axios.get(`${apiUri}/order/purchases`, {
+            axios.get(`${apiUri}/order/pickup`, {
                 headers: {
                     "Content-type": "application/json",
                     "Authorization": `Bearer ${token}`
@@ -47,7 +47,7 @@ export default class PickUp extends Component {
                 result.data.forEach(product => {
                     let unique = true
                     cleanCopy.forEach(copy => {
-                        if(product.product.id === copy.product.id){
+                        if(product.id === copy.id){
                             unique = false
                         }
                     })
@@ -63,7 +63,14 @@ export default class PickUp extends Component {
                 })
                 //console.log(cleanCopy)
             }).catch(err => {
-                Alert.alert('Error', err.response.data.message)
+                switch (err.response) {
+                    case null:
+                        Alert.alert('Error', err.message)
+                        break;            
+                    default:
+                        Alert.alert('Error', err.response.data.message)
+                        break;
+                }
             })
         })
     }
@@ -125,7 +132,7 @@ export default class PickUp extends Component {
                                         onPress={() => {
                                             this.setState({
                                                 modalVisible: true,
-                                                qrCodeValue: item.product.id
+                                                qrCodeValue: item.id
                                             })
                                         }}
                                         style={{

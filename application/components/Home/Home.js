@@ -31,6 +31,9 @@ import Splash from "./Splash";
 import ProductList from "../Product/ProductList";
 import Cart from "../Cart/Cart";
 import CategoryView from "../Category/CategoryView";
+import Search from "../Search/Search";
+import Chat from "../Chat/Chat";
+import Feedback from "../Feedback/Feedback";
 
 
 class Home extends Component {
@@ -123,8 +126,9 @@ class Home extends Component {
                     </View>
 
                 </ScrollView>
-
-                <SearchBar />
+                
+                <SearchBar navigation={this.props.navigation} />
+                
 
 
             </View>
@@ -179,6 +183,15 @@ export default StackNavigator(
         },
         CategoryView: {
             screen: CategoryView
+        },
+        Search: {
+            screen: Search
+        },
+        Chat: {
+            screen: Chat
+        },
+        Feedback: {
+            screen: Feedback
         }
     }, {
         transitionConfig: transitionConfig,

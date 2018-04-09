@@ -9,10 +9,12 @@ import Sell from "../../Sell/Sell"
 import ImagePicker from "react-native-image-picker";
 import Crop from 'react-native-image-crop-picker';
 import Cart from "../../Cart/Cart";
+import Chat from "../../Chat/Chat";
 
 export default TabNavigator(
   {
     Home: { screen: Home, navigationOptions: { tabBarLabel:  'Home'} },
+    
     Sell: { screen: Sell },
     Cart: { screen: Cart },
     Account: { screen: Account },
