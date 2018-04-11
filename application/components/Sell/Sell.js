@@ -416,12 +416,14 @@ function sendRequests() {
             index: 0,
             actions: [
               NavigationActions.navigate({
-                routeName: "Home",
+                routeName: 'Home',
               })
-            ]
+            ],
+            key: null
           });
           
           this.props.navigation.dispatch(resetAction);
+          
     }).catch(err => {
         //console.log(err.response)
         setTimeout(() => {

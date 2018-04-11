@@ -89,7 +89,7 @@ export default class ProductList extends Component {
             currentPage: pageNumber
         })
 
-        alert(pageNumber)
+        //alert(pageNumber)
         axios.get(`${apiUri}/product/page/${pageNumber}`, {
             headers: {
                 "Content-type": "application/json",

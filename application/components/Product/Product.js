@@ -435,7 +435,7 @@ export default class Product extends Component {
                 </ScrollView>
 
                 <View style={styles.container}>
-                    <View style={styles.items}>
+                    {/* <View style={styles.items}>
                         <TouchableOpacity
                             onPress={() => {
                                 this.props.navigation.navigate("Chat")
@@ -444,12 +444,12 @@ export default class Product extends Component {
                             <Icon name="comments" size={25} color="#e74c3c" />
                             <Text style={{ fontSize: 13, color: "#e74c3c" }}>CHAT</Text>
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
 
                     <TouchableOpacity
                         onPress={() => { this._buyNow() }}
                         style={{
-                            flex: 2,
+                            flex: 1,
                             alignItems: "center",
                             justifyContent: "center",
                             backgroundColor: "#e74c3c"
