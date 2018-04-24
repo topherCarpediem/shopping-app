@@ -33,7 +33,7 @@ export default class Product extends Component {
         super(prop)
 
         this.state = {
-            data: {},
+            data: { user: { address: {} } },
             token: "",
             id: "",
             modalVisible: false,
@@ -80,6 +80,7 @@ export default class Product extends Component {
                             ...result.data
                         }
                     })
+                    //alert(JSON.stringify(result.data.user))
                     setTimeout(() => {
                         this.setState({
                             loading: false
@@ -337,16 +338,21 @@ export default class Product extends Component {
                     <View style={{ padding: 10, marginTop: 10, backgroundColor: "white" }}>
                         <Text style={{ fontSize: 15, fontWeight: 'bold' }}>Description: {"\n"}</Text>
                         <Text style={{ fontSize: 15 }}>{this.state.data.productDescription}</Text>
+
+                        <Text style={{ color: "#e74c3c", fontWeight: "bold" }}>{`\n\n`}Seller:</Text>
+                        <Text style={{ color: "black" }}>{`${this.state.data.user.firstName} ${this.state.data.user.lastName} `}</Text>
+                        <Text style={{ color: "#e74c3c", fontWeight: "bold" }}>Contact #:</Text>
+                        <Text style={{ color: "black" }}>{this.state.data.user.address.phoneNumber}</Text>
                     </View>
 
                     <View style={{ padding: 10, marginTop: 10, backgroundColor: "white" }}>
-                        <Text style={{ fontSize: 15, fontWeight: 'bold' }}>Feedbacks {"\n"}</Text>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold' }}>Comments {"\n"}</Text>
 
                         {
                             this.state.feedbacks.length === 0
                                 ?
                                 <View style={{ justifyContent: "center", alignItems: "center" }} >
-                                    <Text>There is no feedback yet. Be the first?</Text>
+                                    <Text>There is no comment yet. Be the first?</Text>
                                     <TouchableOpacity
                                         onPress={() => {
                                             this.props.navigation.navigate("Feedback", {
@@ -367,7 +373,7 @@ export default class Product extends Component {
                                 this.state.feedbacks.map(feedback => {
                                     return (
                                         <View style={{ marginBottom: 10, }}>
-                                            <Text style={{ fontWeight: "bold", color:"#e74c3c" }}>{feedback.user.firstName} {feedback.user.lastName}</Text>
+                                            <Text style={{ fontWeight: "bold", color: "#e74c3c" }}>{feedback.user.firstName} {feedback.user.lastName}</Text>
                                             <Text>{feedback.message}</Text>
                                             <Text style={{ fontSize: 12 }}>{moment(feedback.created_at).fromNow()}</Text>
                                         </View>
@@ -446,7 +452,7 @@ export default class Product extends Component {
                         </TouchableOpacity>
                     </View> */}
 
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                         onPress={() => { this._buyNow() }}
                         style={{
                             flex: 1,
@@ -455,14 +461,15 @@ export default class Product extends Component {
                             backgroundColor: "#e74c3c"
                         }}>
                         <Text style={{ fontSize: 13, color: "white" }}>BUY NOW</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
 
                     <View style={styles.items}>
                         <TouchableOpacity
+                            
                             onPress={() => { this.setModalVisible(true); this.setState({ action: "cart" }) }}>
-                            <View style={{ justifyContent: "center", alignItems: "center" }}>
-                                <Icon name="shopping-cart" size={25} color="#e74c3c" />
-                                <Text style={{ fontSize: 13, color: "#e74c3c" }}>ADD TO CART</Text>
+                            <View style={{ justifyContent: "center", alignItems: "center"  }}>
+                                <Icon name="shopping-cart" size={25} color="white" />
+                                <Text style={{ fontSize: 13, color: "white" }}>ADD TO CART</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -622,7 +629,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         padding: 7,
-        backgroundColor: "white"
+        backgroundColor: "#e74c3c"
     },
     modalContainer: {
         flex: 1,

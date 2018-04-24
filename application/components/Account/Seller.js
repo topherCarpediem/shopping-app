@@ -63,7 +63,7 @@ export default class Seller extends Component {
                     </View>
                 </View>
 
-                <View style={{ flexDirection: "row" }}>
+                {/* <View style={{ flexDirection: "row" }}>
 
                     <View
                         style={{
@@ -78,7 +78,7 @@ export default class Seller extends Component {
 
                     </View>
 
-                </View>
+                </View> */}
             </View>
         )
     }
