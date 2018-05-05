@@ -14,7 +14,8 @@ export default class Feedback extends Component {
             feedbacks: [],
             token: "",
             comment: "",
-            productId: ""
+            productId: "",
+            feedback: false
         }
     }
 
@@ -24,7 +25,8 @@ export default class Feedback extends Component {
         AsyncStorage.getItem("token").then(token => {
             this.setState({
                 token: token,
-                productId: params.productId
+                productId: params.productId,
+                feedback: params.feedback
             })
 
             axios.get(`${apiUri}/feedback/getall/${params.productId}`, {
@@ -115,44 +117,47 @@ export default class Feedback extends Component {
                         </View>
                     }
                 />
-                <View style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    position: "absolute",
-                    bottom: 0,
-                    borderWidth: 1,
-                    margin: 10,
-                    borderRadius: 15,
-                    borderColor: "#e74c3c",
-                    
-                }}>
-                    <TextInput
-                        placeholder="Write comment"
-                        multiline={true}
-                        value={this.state.comment}
-                        onChangeText={(text) => { this.setState({ comment: text }) }}
-                        underlineColorAndroid="transparent"
-                        style={{
-                            flex: 1,
-                            maxHeight: 100,
-                            marginLeft: 10
-                        }} />
-                    <TouchableOpacity
-                        onPress={() => {
-                            this._addFeedBack()
-                        }}
-                        style={{
-                            justifyContent: "center",
-                            alignContent: "center",
-                            padding: 10,
-                            paddingLeft: 15,
-                            paddingRight: 15,
-                        }}>
-                        <Text style={{
-                            color: "#e74c3c"
-                        }}>Post</Text>
-                    </TouchableOpacity>
-                </View>
+                {
+                    this.state.feedback === true &&
+                    <View style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        position: "absolute",
+                        bottom: 0,
+                        borderWidth: 1,
+                        margin: 10,
+                        borderRadius: 15,
+                        borderColor: "#e74c3c",
+
+                    }}>
+                        <TextInput
+                            placeholder="Write comment"
+                            multiline={true}
+                            value={this.state.comment}
+                            onChangeText={(text) => { this.setState({ comment: text }) }}
+                            underlineColorAndroid="transparent"
+                            style={{
+                                flex: 1,
+                                maxHeight: 100,
+                                marginLeft: 10
+                            }} />
+                        <TouchableOpacity
+                            onPress={() => {
+                                this._addFeedBack()
+                            }}
+                            style={{
+                                justifyContent: "center",
+                                alignContent: "center",
+                                padding: 10,
+                                paddingLeft: 15,
+                                paddingRight: 15,
+                            }}>
+                            <Text style={{
+                                color: "#e74c3c"
+                            }}>Post</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
             </View>
         )
     }

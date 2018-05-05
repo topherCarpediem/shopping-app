@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { TabNavigator, TabBarBottom, NavigationActions } from 'react-navigation';
 import { View, Text, AsyncStorage, Dimensions } from "react-native";
@@ -11,12 +11,57 @@ import Crop from 'react-native-image-crop-picker';
 import Cart from "../../Cart/Cart";
 import Chat from "../../Chat/Chat";
 
+
+import axios from "axios"
+import { apiUri } from "../../../../config";
+
+
+class T extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      number: 0
+    }
+  }
+
+  componentWillMount(){
+    alert("hey")
+  }
+}
+
+const topher = new T()
+
+
 export default TabNavigator(
   {
-    Home: { screen: Home, navigationOptions: { tabBarLabel:  'Home'} },
-    
+    Home: { screen: Home, navigationOptions: { tabBarLabel: 'Home' } },
+
     Sell: { screen: Sell },
-    Cart: { screen: Cart },
+    Cart: {
+      screen: Cart,
+      navigationOptions: ({ navigation }) => ({
+        tabBarIcon: ({ tintColor }) => {
+          return (
+            <View>
+              <Icon name="shopping-cart" size={25} color={tintColor} />
+              <View style={{
+                position: "absolute",
+                right: 0,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#e74c3c",
+                borderRadius: 100,
+                minWidth: 12,
+                minHeight: 12
+              }}>
+
+                <Text style={{ fontSize: 12, color: "white" }}>{topher.state.number === 0 ? "": topher.state.number}</Text>
+              </View>
+            </View>)
+        }
+      })
+    },
     Account: { screen: Account },
 
   },
@@ -46,18 +91,28 @@ export default TabNavigator(
     tabBarComponent: ({ jumpToIndex, ...props }) => (
       <TabBarBottom
         {...props}
-        jumpToIndex={ async (index) => {
-          
+        jumpToIndex={async (index) => {
+
           let token = null
 
           try {
-            token = await AsyncStorage.getItem("token")  
+            token = await AsyncStorage.getItem("token")
           } catch (error) {
             console.log(error)
           }
-          
+
 
           if (token !== null) {
+            let number = await axios.get(`${apiUri}/cart/all`, {
+              headers: {
+                "Content-type": "application/json",
+                "Authorization": `Bearer ${token}`
+              }
+            })
+
+            number = number.data.length
+            topher.state.number = number
+
             if (index === 1) {
               console.log(`Index ${index}`)
 
@@ -104,10 +159,22 @@ export default TabNavigator(
               jumpToIndex(index)
             }
           } else {
-            let navigationAction = NavigationActions.navigate({
-              routeName: "Login"
-            })
-            props.navigation.dispatch(navigationAction)
+
+            let cart = await AsyncStorage.getItem("offlineCart")
+            cart = JSON.parse(cart)
+
+            if (cart !== null) {
+              topher.state.number = cart.length
+            }
+
+            if (index === 2 || index === 0) {
+              jumpToIndex(index)
+            } else {
+              let navigationAction = NavigationActions.navigate({
+                routeName: "Login"
+              })
+              props.navigation.dispatch(navigationAction)
+            }
           }
 
         }}

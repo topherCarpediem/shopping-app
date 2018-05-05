@@ -25,6 +25,7 @@ import Track from "./Track";
 import Income from "./Income";
 import MyProducts from "./MyProducts";
 import PickUp from "./PickUp";
+import Feedback from "../Feedback/Feedback";
 
 const transitionConfig = () => {
     return {
@@ -127,6 +128,9 @@ export default AccountStack = StackNavigator({
     },
     PickUp: {
         screen: PickUp
+    },
+    Feedback : {
+        screen: Feedback
     }
 },{
     transitionConfig: transitionConfig,

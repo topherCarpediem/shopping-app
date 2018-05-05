@@ -52,6 +52,7 @@ export default class Product extends Component {
         this.decrementQuantity = this.decrementQuantity.bind(this)
         this.setLoadingVisible = this.setLoadingVisible.bind(this)
         this.addToCart = this.addToCart.bind(this)
+
     }
 
 
@@ -147,6 +148,78 @@ export default class Product extends Component {
     }
 
     addToCart() {
+
+        
+        if (this.state.data.stocks === 0) {
+            Alert.alert('Out of stock!', 'Item does not have any more stock. Please check again later.')
+            return
+        }
+
+
+        if (this.state.token === null) {
+            const { user, ...productDetails } = this.state.data
+            
+            const cartItem = {
+                quantity: this.state.quantity,
+                product: productDetails
+            }
+
+            AsyncStorage.getItem("offlineCart").then(offlineCart => {
+                if (offlineCart === null) {
+                    AsyncStorage.setItem("offlineCart", JSON.stringify([]))
+                } else {
+                    Alert.alert('Continue?', 'Do you want to add product to the cart?',
+                        [{
+                            text: 'OK', onPress: () => {
+
+                                this.setModalVisible(false)
+                                this.setLoadingVisible(true)
+
+                                const myCart = JSON.parse(offlineCart)
+
+                                //alert(JSON.stringify(myCart))
+                                //
+                                
+                                const isExist = myCart.filter(cart => cart.product.id === cartItem.product.id ? true : false)
+                                if (isExist.length !== 0) {
+                                    //alert(JSON.stringify(isExist))
+                                    this.setLoadingVisible(false)
+                                    Alert.alert('Oops!, Somethings wrong!', 'The item is already exist in your cart..')
+                                } else {
+                                    myCart.push(cartItem)
+                                    AsyncStorage.setItem("offlineCart", JSON.stringify(myCart)).then(() => {
+                                        setTimeout(() => {
+                                            this.setLoadingVisible(false)
+                                            Alert.alert('Success!', "Added to the cart",
+                                                [{
+                                                    text: 'OK',
+                                                },
+                                                {
+                                                    text: 'VIEW CART', onPress: () => {
+                                                        this.props.navigation.navigate('Cart')
+                                                    }
+                                                }],
+                                                {
+                                                    cancelable: false
+                                                }
+                                            )
+                                        }, 2000)
+                                    })
+                                }
+                            }
+                        },
+                        { text: 'Cancel' }
+
+                        ])
+
+                }
+            })
+            //alert(JSON.stringify(cartItem))
+            return
+        }
+
+
+
         Alert.alert('Continue?', 'Do you want to add product to the cart?',
             [
                 {
@@ -198,6 +271,7 @@ export default class Product extends Component {
 
             ])
     }
+
 
     incrementQuantity() {
 
@@ -261,42 +335,53 @@ export default class Product extends Component {
     }
 
     _onPressBuyNow() {
-        this.setState({ loading: true })
+        // this.setState({ loading: true })
 
-        const productDetails = []
+        // const productDetails = []
 
-        productDetails.push({
-            id: this.state.data.id,
-            quantity: this.state.quantity,
-            shippingAddress: this.state.shippingAddress
+        // productDetails.push({
+        //     id: this.state.data.id,
+        //     quantity: this.state.quantity,
+        //     shippingAddress: this.state.shippingAddress
+        // })
+
+        // axios.post(`${apiUri}/order/checkout`,
+        //     {
+        //         productDetails: JSON.stringify(productDetails),
+        //     },
+        //     {
+        //         headers: {
+        //             "Content-type": "application/json",
+        //             "Authorization": `Bearer ${this.state.token}`
+        //         },
+        //     }).then(result => {
+        //         setTimeout(() => {
+        //             this.setState({
+        //                 loading: false
+        //             })
+        //             Alert.alert('Success', result.data.message)
+        //         }, 1000)
+
+
+        //     }).catch(err => {
+        //         setTimeout(() => {
+        //             this.setState({
+        //                 loading: false
+        //             })
+        //             Alert.alert('Error', err.response.data.message)
+        //         }, 1000)
+        //     })
+
+    }
+
+    _checkIfLogin() {
+        return AsyncStorage.getItem("token").then(token => {
+            if (token !== null) {
+                return true
+            }
+
+            return false
         })
-
-        axios.post(`${apiUri}/order/checkout`,
-            {
-                productDetails: JSON.stringify(productDetails),
-            },
-            {
-                headers: {
-                    "Content-type": "application/json",
-                    "Authorization": `Bearer ${this.state.token}`
-                },
-            }).then(result => {
-                setTimeout(() => {
-                    this.setState({
-                        loading: false
-                    })
-                    Alert.alert('Success', result.data.message)
-                }, 1000)
-
-
-            }).catch(err => {
-                setTimeout(() => {
-                    this.setState({
-                        loading: false
-                    })
-                    Alert.alert('Error', err.response.data.message)
-                }, 1000)
-            })
     }
 
 
@@ -352,14 +437,9 @@ export default class Product extends Component {
                             this.state.feedbacks.length === 0
                                 ?
                                 <View style={{ justifyContent: "center", alignItems: "center" }} >
-                                    <Text>There is no comment yet. Be the first?</Text>
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            this.props.navigation.navigate("Feedback", {
-                                                title: this.state.data.productName,
-                                                productId: this.state.id
-                                            })
-                                        }}
+                                    <Text>There is no feedback yet. </Text>
+                                    {/* <TouchableOpacity
+                                        onPress={() => { }}
                                         style={{
                                             backgroundColor: "#e74c3c",
                                             padding: 10,
@@ -367,7 +447,7 @@ export default class Product extends Component {
                                             width: Dimensions.get('window').width - 20
                                         }}>
                                         <Text style={{ textAlign: "center", color: "white" }}>Comment</Text>
-                                    </TouchableOpacity>
+                                    </TouchableOpacity> */}
                                 </View>
                                 :
                                 this.state.feedbacks.map(feedback => {
@@ -388,7 +468,8 @@ export default class Product extends Component {
                                     onPress={() => {
                                         this.props.navigation.navigate("Feedback", {
                                             title: this.state.data.productName,
-                                            productId: this.state.id
+                                            productId: this.state.id,
+                                            feedback: false
                                         })
                                     }}
                                     style={{
@@ -465,9 +546,9 @@ export default class Product extends Component {
 
                     <View style={styles.items}>
                         <TouchableOpacity
-                            
+
                             onPress={() => { this.setModalVisible(true); this.setState({ action: "cart" }) }}>
-                            <View style={{ justifyContent: "center", alignItems: "center"  }}>
+                            <View style={{ justifyContent: "center", alignItems: "center" }}>
                                 <Icon name="shopping-cart" size={25} color="white" />
                                 <Text style={{ fontSize: 13, color: "white" }}>ADD TO CART</Text>
                             </View>

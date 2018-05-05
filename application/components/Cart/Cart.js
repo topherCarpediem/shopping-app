@@ -39,39 +39,95 @@ export default class Cart extends Component {
             fullname: "",
             shippingAddress: "",
             phoneNumber: "",
-            
+
         }
+
+        this._getOfflineCart = this._getOfflineCart.bind(this)
     }
 
     componentWillMount() {
         AsyncStorage.getItem("token").then(token => {
+
             this.setState({
                 token
             })
-            this.getCartItem()
 
-            axios.get(`${apiUri}/user/profile`, {
-                headers: {
-                    "Content-type": "application/json",
-                    "Authorization": `Bearer ${this.state.token}`
-                }
-            }).then(result => {
-                 const userDetails = result.data
-                 const userAddress = userDetails.address
-                this.setState({
-                    fullname: `${userDetails.firstName} ${userDetails.lastName}`,
-                    shippingAddress: `${userAddress.line1} ${userAddress.line2} ${userAddress.barangay} ${userAddress.city} ${userAddress.province}`,
-                    phoneNumber: `${userAddress.phoneNumber}`
+            if (token === null) {
+
+                this._getOfflineCart()
+
+            } else {
+
+                this.getCartItem()
+
+                axios.get(`${apiUri}/user/profile`, {
+                    headers: {
+                        "Content-type": "application/json",
+                        "Authorization": `Bearer ${this.state.token}`
+                    }
+                }).then(result => {
+                    const userDetails = result.data
+                    const userAddress = userDetails.address
+                    this.setState({
+                        fullname: `${userDetails.firstName} ${userDetails.lastName}`,
+                        shippingAddress: `${userAddress.line1} ${userAddress.line2} ${userAddress.barangay} ${userAddress.city} ${userAddress.province}`,
+                        phoneNumber: `${userAddress.phoneNumber}`
+                    })
+                    //console.log(result.data)
+                    //console.log(userDetails)
+                }).catch(err => {
+                    console.log(err)
                 })
-                //console.log(result.data)
-                //console.log(userDetails)
-            }).catch(err => {
-                console.log(err)
-            })
+            }
+
         })
     }
 
-    
+    componentDidMount(){
+        if(this.state.token === null){
+            this._getOfflineCart()
+        }
+    }
+
+    _getOfflineCart() {
+        AsyncStorage.getItem("offlineCart").then(ca => {
+
+            if (ca === null) {
+                return
+            }
+
+            const cartItems = JSON.parse(ca)
+            if (cartItems.length !== 0) {
+
+                const data = cartItems.map(cart => {
+                    cart.check = true
+                    cart.totalPrice = cart.quantity * cart.product.productPrice
+                    return cart
+                })
+
+                let subTotal = 0
+
+                data.forEach(cart => {
+                    if (cart.check) {
+                        subTotal = subTotal + cart.totalPrice
+                    }
+                })
+
+                this.setState({
+                    data: data,
+                    subTotal: subTotal,
+                    refreshing: false
+                })
+            } else {
+                this.setState({
+                    data: [],
+                    subTotal: 0,
+                    refreshing: false
+                })
+            }
+        })
+    }
+
     _onPress(item, status) {
         let copyOfCart = this.state.data.map(cart => {
             if (cart.cid === item.cid) {
@@ -221,35 +277,53 @@ export default class Cart extends Component {
                             loading: true
                         })
 
-                        axios.delete(`${apiUri}/cart/delete/${productId}`, {
-                            headers: {
-                                "Content-type": "application/json",
-                                "Authorization": `Bearer ${this.state.token}`
-                            }
-                        }).then(result => {
+                        if (this.state.token === null) {
+                            AsyncStorage.getItem("offlineCart").then(myCart => {
 
+                                const cart = JSON.parse(myCart)
 
-                            let copyCart = this.state.data.filter(cart => cart.product.id !== productId)
+                                let copyCart = cart.filter(cart => cart.product.id !== productId)
 
-                            this.setState({
-                                data: [
-                                    ...copyCart
-                                ]
+                                AsyncStorage.setItem("offlineCart", JSON.stringify(copyCart));
+
+                                this._getOfflineCart()
+
+                                this.setState({
+                                    loading: false
+                                })
+
                             })
+                        } else {
+                            axios.delete(`${apiUri}/cart/delete/${productId}`, {
+                                headers: {
+                                    "Content-type": "application/json",
+                                    "Authorization": `Bearer ${this.state.token}`
+                                }
+                            }).then(result => {
 
-                            setTimeout(() => {
-                                this.setState({ loading: false })
-                                alert(result.data.message)
-                            }, 1000)
+
+                                let copyCart = this.state.data.filter(cart => cart.product.id !== productId)
+
+                                this.setState({
+                                    data: [
+                                        ...copyCart
+                                    ]
+                                })
+
+                                setTimeout(() => {
+                                    this.setState({ loading: false })
+                                    alert(result.data.message)
+                                }, 1000)
 
 
-                        }).catch(err => {
-                            setTimeout(() => {
-                                this.setState({ loading: false })
-                                alert(err.response.data.message)
-                            }, 1000)
+                            }).catch(err => {
+                                setTimeout(() => {
+                                    this.setState({ loading: false })
+                                    alert(err.response.data.message)
+                                }, 1000)
 
-                        })
+                            })
+                        }
                     }
                 },
                 { text: 'No' }
@@ -261,6 +335,10 @@ export default class Cart extends Component {
     }
 
     checkoutPress() {
+        if (this.state.token === null) {
+            this.props.navigation.navigate('Login')
+            return
+        }
         if (this.state.subTotal === 0) {
             Alert.alert('Error', 'Please select an item that you will buy')
         } else {
@@ -301,6 +379,7 @@ export default class Cart extends Component {
                     Alert.alert('Success', result.data.message)
                 }, 1000)
 
+                this.getCartItem()
 
             }).catch(err => {
                 setTimeout(() => {
@@ -327,7 +406,14 @@ export default class Cart extends Component {
 
                 <FlatList
                     refreshing={this.state.refreshing}
-                    onRefresh={() => { this.getCartItem() }}
+                    onRefresh={() => {
+                        
+                        if (this.state.token !== null) {
+                            this.getCartItem()
+                        } else {
+                            this._getOfflineCart()
+                        }
+                    }}
                     style={{ marginBottom: 100 }}
                     keyExtractor={(item) => item.cid}
                     data={this.state.data}
@@ -479,13 +565,13 @@ export default class Cart extends Component {
                     }
                 </Modal>
                 {
-                        this.state.loading &&
-                        <View style={styles.loading}>
-                            <View style={{ backgroundColor: "white", padding: 20, borderRadius: 5 }}>
-                                <ActivityIndicator size={80} color="#e74c3c" />
-                            </View>
+                    this.state.loading &&
+                    <View style={styles.loading}>
+                        <View style={{ backgroundColor: "white", padding: 20, borderRadius: 5 }}>
+                            <ActivityIndicator size={80} color="#e74c3c" />
                         </View>
-                    }
+                    </View>
+                }
             </View>
 
         )

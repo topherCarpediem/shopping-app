@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, AsyncStorage, Image, FlatList, Alert } from "react-native";
+import { View, Text, AsyncStorage, Image, FlatList, Alert, TouchableOpacity, Dimensions } from "react-native";
 import axios from "axios";
 import { apiUri } from "../../../config";
 
@@ -31,9 +31,9 @@ export default class Track extends Component {
 
     }
 
-    _fetchOrder(orderId, token){
+    _fetchOrder(orderId, token) {
         this.setState({ refreshing: true });
-        
+
         orderId = orderId === null || orderId === undefined ? this.state.orderId : orderId
         token = token === null || token === undefined ? this.state.token : token
 
@@ -49,13 +49,13 @@ export default class Track extends Component {
                 orderId: result.data.id
             })
             this.setState({ refreshing: false });
-            
+
         }).catch(err => {
 
             switch (err.response) {
                 case null:
                     Alert.alert('Error', err.message)
-                    break;            
+                    break;
                 default:
                     Alert.alert('Error', err.response.data.message)
                     break;
@@ -152,7 +152,29 @@ export default class Track extends Component {
                                 }
 
                             </View>
-                            <View style={{ marginTop: 50, alignItems: "center" }}>
+                            {
+                                item.orderStatus === "Delivered" &&
+                                <View style={{ justifyContent: "center", alignItems: "center", marginTop: 15 }} >
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            this.props.navigation.navigate("Feedback", {
+                                                title: this.state.data[0].product.productName,
+                                                productId: this.state.data[0].product.id,
+                                                feedback: true
+                                            })
+                                        }}
+                                        style={{
+                                            backgroundColor: "#e74c3c",
+                                            padding: 10,
+                                            width: Dimensions.get('window').width - 20,
+                                            borderRadius: 5
+                                        }}>
+                                        <Text style={{ textAlign: "center", color: "white" }}>Add Feedback</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            }
+
+                            <View style={{ marginTop: 20, alignItems: "center" }}>
                                 <QRCode
                                     value={item.id}
                                     size={200}
