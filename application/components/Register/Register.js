@@ -316,6 +316,7 @@ export default class Register extends Component {
 
                     <Text style={{ justifyContent: "center", textAlign: "center", marginBottom: 10, fontSize: 25 }}>Shipping Address</Text>
                     
+                   
                     <View style={styles.inputContainer}>
                         <Icon style={styles.emailIcon} name="address-card" size={16} />
                         <TextInput
@@ -355,7 +356,7 @@ export default class Register extends Component {
                             style={{ flex: 1 }}
                             selectedValue={this.state.state}
                             onValueChange={this._stateChange.bind(this)}>
-                            <Picker.Item label="Please select state..." value="Please select state..." color="gray" />
+                            <Picker.Item label="Please select province..." value="Please select province..." color="gray" />
                             <Picker.Item label="Batangas" value="Batangas" color="gray" />
                         </Picker>
 
