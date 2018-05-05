@@ -14,6 +14,8 @@ import {
     Modal
 } from "react-native";
 
+import { NavigationActions } from "react-navigation"
+
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -299,9 +301,22 @@ export default class Cart extends Component {
                         modalLoading: false
                     })
                     Alert.alert('Success', result.data.message)
+
+                    const resetAction = NavigationActions.reset({
+                        index: 0,
+                        actions: [
+                            NavigationActions.navigate({
+                                routeName: 'Home',
+                            })
+                        ],
+                        key: null
+                    });
+
+                    this.props.navigation.dispatch(resetAction);
+
                 }, 1000)
 
-
+                //this.getCartItem()
             }).catch(err => {
                 setTimeout(() => {
                     this.setState({

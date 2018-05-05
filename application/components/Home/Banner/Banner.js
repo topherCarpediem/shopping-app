@@ -17,18 +17,18 @@ export default class Banner extends Component {
                     autoplayTimeout={5}
                  >
                     <View style={{ flex: 1}}>
-                        <Image source={{ uri: "https://www.nature.org/cs/groups/webcontent/@web/@caribbean/documents/media/caribbean-diver-640x400.jpg" }}
-                            style={{ flex: 1 }}
+                        <Image source={ require("../../../../src/assets/images/banner1.jpg") }
+                            style={{ flex: 1,  width: undefined, height: undefined }}
                         />
                     </View>
                     <View style={{ flex: 1}}>
-                        <Image source={{ uri: "http://www.123mobilewallpapers.com/wp-content/uploads/2014/07/danbo_in_forest.jpg" }}
-                            style={{ flex: 1 }}
+                        <Image source={ require("../../../../src/assets/images/banner2.jpg") }
+                            style={{ flex: 1,  width: undefined, height: undefined }}
                         />
                     </View>
                     <View style={{ flex: 1}}>
-                        <Image source={{ uri: "http://www.123mobilewallpapers.com/wp-content/uploads/2014/07/beautiful_fantasy_girl.jpg" }}
-                            style={{ flex: 1 }}
+                        <Image source={ require("../../../../src/assets/images/banner3.jpg") }
+                            style={{ flex: 1,  width: undefined, height: undefined }}
                         />
                     </View>
                 </Swiper>

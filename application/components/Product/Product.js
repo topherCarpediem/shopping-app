@@ -147,6 +147,10 @@ export default class Product extends Component {
     }
 
     addToCart() {
+        if(this.state.data.stocks ===0){
+            Alert.alert('Out of stocks', 'Item does not have enough stock. Please check again later')
+            return
+        }
         Alert.alert('Continue?', 'Do you want to add product to the cart?',
             [
                 {

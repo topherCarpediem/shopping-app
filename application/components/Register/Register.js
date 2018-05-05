@@ -315,32 +315,34 @@ export default class Register extends Component {
                     </View>
 
                     <Text style={{ justifyContent: "center", textAlign: "center", marginBottom: 10, fontSize: 25 }}>Shipping Address</Text>
-                    <View style={styles.inputContainer}>
-                        <Icon style={styles.emailIcon} name="address-card" size={16} />
-                        <TextInput
-                            onChangeText={(text) => { this.setState({ line1: text }) }}
-                            placeholder="Line 1"
-
-                            //onEndEditing={this.validateInput}
-                            underlineColorAndroid='transparent'
-                            style={styles.input} />
-                        <TouchableOpacity
-                            onPress={() => { Alert.alert('Line 1', `The first line of the user’s street address (e.g. "123 Fake St")`) }}
-                        >
-                            <Icon style={{ padding: 20, paddingTop: 15, paddingBottom: 15, }} name="info" size={16} />
-                        </TouchableOpacity>
-                    </View>
+                   
                     <View style={styles.inputContainer}>
                         <Icon style={styles.emailIcon} name="address-card" size={16} />
                         <TextInput
                             onChangeText={(text) => { this.setState({ line2: text }) }}
-                            placeholder="Line 2"
+                            placeholder="House number"
 
                             //onEndEditing={this.validateInput}
                             underlineColorAndroid='transparent'
                             style={styles.input} />
                         <TouchableOpacity
-                            onPress={() => { Alert.alert('Line 2', `The apartment, floor number, etc of the user’s street address (e.g. "Apartment 1A")`) }}
+                            onPress={() => { Alert.alert('House number', `The apartment, floor number, etc of the user’s street address (e.g. "Apartment 1A")`) }}
+                        >
+                            <Icon style={{ padding: 20, paddingTop: 15, paddingBottom: 15, }} name="info" size={16} />
+                        </TouchableOpacity>
+                    </View>
+
+                     <View style={styles.inputContainer}>
+                        <Icon style={styles.emailIcon} name="address-card" size={16} />
+                        <TextInput
+                            onChangeText={(text) => { this.setState({ line1: text }) }}
+                            placeholder="Street"
+
+                            //onEndEditing={this.validateInput}
+                            underlineColorAndroid='transparent'
+                            style={styles.input} />
+                        <TouchableOpacity
+                            onPress={() => { Alert.alert('Street', `The first line of the user’s street address (e.g. "123 Fake St")`) }}
                         >
                             <Icon style={{ padding: 20, paddingTop: 15, paddingBottom: 15, }} name="info" size={16} />
                         </TouchableOpacity>
@@ -353,12 +355,12 @@ export default class Register extends Component {
                             style={{ flex: 1 }}
                             selectedValue={this.state.state}
                             onValueChange={this._stateChange.bind(this)}>
-                            <Picker.Item label="Please select state..." value="Please select state..." color="gray" />
+                            <Picker.Item label="Please select province..." value="Please select province..." color="gray" />
                             <Picker.Item label="Batangas" value="Batangas" color="gray" />
                         </Picker>
 
                         <TouchableOpacity
-                            onPress={() => { Alert.alert('State', `The state in which the user resides (e.g. "Batangas")`) }} >
+                            onPress={() => { Alert.alert('Province', `The state in which the user resides (e.g. "Batangas")`) }} >
                             <Icon style={{ padding: 20, paddingTop: 15, paddingBottom: 15, }} name="info" size={16} />
                         </TouchableOpacity>
                     </View>
