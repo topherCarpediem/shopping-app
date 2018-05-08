@@ -18,6 +18,7 @@ import {
     TouchableWithoutFeedback
 } from "react-native";
 
+import { NavigationActions } from "react-navigation";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Swiper from "react-native-swiper";
@@ -149,7 +150,7 @@ export default class Product extends Component {
 
     addToCart() {
 
-        
+
         if (this.state.data.stocks === 0) {
             Alert.alert('Out of stock!', 'Item does not have any more stock. Please check again later.')
             return
@@ -158,7 +159,7 @@ export default class Product extends Component {
 
         if (this.state.token === null) {
             const { user, ...productDetails } = this.state.data
-            
+
             const cartItem = {
                 quantity: this.state.quantity,
                 product: productDetails
@@ -179,7 +180,7 @@ export default class Product extends Component {
 
                                 //alert(JSON.stringify(myCart))
                                 //
-                                
+
                                 const isExist = myCart.filter(cart => cart.product.id === cartItem.product.id ? true : false)
                                 if (isExist.length !== 0) {
                                     //alert(JSON.stringify(isExist))
@@ -243,7 +244,20 @@ export default class Product extends Component {
                                     this.setLoadingVisible(false)
                                     Alert.alert('Success!', result.data.message,
                                         [{
-                                            text: 'OK',
+                                            text: 'OK', onPress: () => {
+
+                                                const resetAction = NavigationActions.reset({
+                                                    index: 0,
+                                                    actions: [
+                                                        NavigationActions.navigate({
+                                                            routeName: 'Home',
+                                                        })
+                                                    ],
+                                                    key: null
+                                                });
+
+                                                this.props.navigation.dispatch(resetAction);
+                                            },
                                         },
                                         {
                                             text: 'VIEW CART', onPress: () => {

@@ -101,25 +101,46 @@ export default class Cart extends Component {
             const cartItems = JSON.parse(ca)
             if (cartItems.length !== 0) {
 
+                // const data = cartItems.map(cart => {
+                //     cart.check = true
+                //     cart.totalPrice = cart.quantity * cart.product.productPrice
+                //     return cart
+                // })
+
+                // let subTotal = 0
+
+                // data.forEach(cart => {
+                //     if (cart.check) {
+                //         subTotal = subTotal + cart.totalPrice
+                //     }
+                // })
+
+                // this.setState({
+                //     data: data,
+                //     subTotal: subTotal,
+                //     refreshing: false
+                // })
+
                 const data = cartItems.map(cart => {
                     cart.check = true
                     cart.totalPrice = cart.quantity * cart.product.productPrice
                     return cart
                 })
-
+    
                 let subTotal = 0
-
-                data.forEach(cart => {
-                    if (cart.check) {
-                        subTotal = subTotal + cart.totalPrice
+    
+                data.forEach(c => {
+                    if (c.check) {
+                        subTotal = subTotal + c.totalPrice
                     }
                 })
-
+    
                 this.setState({
                     data: data,
                     subTotal: subTotal,
                     refreshing: false
                 })
+
             } else {
                 this.setState({
                     data: [],
@@ -131,8 +152,10 @@ export default class Cart extends Component {
     }
 
     _onPress(item, status) {
+        //alert(JSON.stringify(item))
+
         let copyOfCart = this.state.data.map(cart => {
-            if (cart.cid === item.cid) {
+            if (cart.product.id === item.product.id) {
                 if (status) {
                     cart.check = true
 
