@@ -79,7 +79,7 @@ export default class Sell extends Component {
     }
 
     componentWillUnmount() {
-        ToastAndroid.show("unmounting", ToastAndroid.SHORT)
+        //ToastAndroid.show("unmounting", ToastAndroid.SHORT)
         //BackHandler.removeEventListener('hardwareBackPress');
         this.backHandler.remove()
     }

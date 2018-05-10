@@ -32,7 +32,14 @@ export default class Register extends Component {
             "San Isidro Norte", "San Isidro Sur", "San Joaquin", "San Jose", "San Juan", "San Luis", "San Miguel", "San Pablo", "San Pedro", "San Rafael", "San Roque", "Santa Ana", "Santa Anastacia",
             "Santa Clara", "Santa Cruz", "Santa Elena", "Santa Maria", "Santa Teresita", "Santiago", "San Vicente"]
 
-        this.cityList = ["Lipa", "Malvar", "Tanauan", "Sto. Tomas"]
+        this.mabini = ["Please select barangay...", "Anilao East", "Anilao Proper", "Bagalangit", "Bulacan", "Calamias", "Calamias", "Estrella", "Gasang", "Laurel", "Ligaya", "Mainaga", "Mainit", "Majuben", "Malimatoc I", "Malimatoc Ii", "Nag-iba", "Pilahan", "Poblacion",
+            "Pulang Lupa", "Pulong Anahao", "Pulong Balibaguhan", "Pulong Niogan", "Saguing", "Sampaguita", "San Francisco", "San Jose", "San Juan", "Santa Ana", "Santa Mesa", "San Teodoro", "San Teodoro", "Santo Nino", "Santo Tomas",
+            "Solo", "Talaga East", "Talaga Proper"]
+
+        this.talisay = ["Please select barangay...", "Aya", "Balas", "Banga", "Buco", "Caloocan", "Leynes", "Miranda", "Poblacion Barangay 1", "Poblacion Barangay 2", "Poblacion Barangay 3", "Poblacion Barangay 4", "Poblacion Barangay 5", "Poblacion Barangay 6",
+                        "Poblacion Barangay 7", "Poblacion Barangay 8", "Quiling", "Sampaloc", "San Guillermo", "Santa Maria", "Tranca", "Tumaway"]
+
+        this.cityList = ["Lipa", "Malvar", "Tanauan", "Sto. Tomas", "Mabini", "Talisay"]
 
         this.state = {
             firstName: "",
@@ -66,9 +73,9 @@ export default class Register extends Component {
         } else if (this.state.emailAddress === "") {
             isValidInput = false
             errorMessage = "Email address field is empty"
-        } else if(this.state.emailAddress !== ""){
+        } else if (this.state.emailAddress !== "") {
             const isValidEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.exec(this.state.emailAddress)
-            if(isValidEmail === null){
+            if (isValidEmail === null) {
                 isValidInput = false
                 errorMessage = "Not a valid email address"
             }
@@ -135,17 +142,17 @@ export default class Register extends Component {
             }
         }).then(result => {
             return axios.post(`${apiUri}/user/login`,
-            {
-                emailAddress: this.state.emailAddress,
-                password: this.state.password
-            },
-            {
-                headers: {
-                    "Content-type": "application/json"
-                }
-            })
+                {
+                    emailAddress: this.state.emailAddress,
+                    password: this.state.password
+                },
+                {
+                    headers: {
+                        "Content-type": "application/json"
+                    }
+                })
         }).then(response => {
-    
+
             AsyncStorage.setItem("token", response.data.token).then(saved => {
 
                 const resetAction = NavigationActions.reset({
@@ -184,6 +191,7 @@ export default class Register extends Component {
                     city: "Malvar"
                 })
                 break;
+
             case "Tanauan":
                 this.setState({
                     barangayList: [
@@ -192,12 +200,31 @@ export default class Register extends Component {
                     city: "Tanauan"
                 })
                 break;
+
             case "Sto. Tomas":
                 this.setState({
                     barangayList: [
                         ...this.stotomas
                     ],
                     city: "Sto. Tomas"
+                })
+                break;
+
+            case "Mabini":
+                this.setState({
+                    barangayList: [
+                        ...this.mabini
+                    ],
+                    city: "Mabini"
+                })
+                break;
+
+            case "Talisay":
+                this.setState({
+                    barangayList: [
+                        ...this.talisay
+                    ],
+                    city: "Talisay"
                 })
                 break;
 
@@ -315,8 +342,8 @@ export default class Register extends Component {
                     </View>
 
                     <Text style={{ justifyContent: "center", textAlign: "center", marginBottom: 10, fontSize: 25 }}>Shipping Address</Text>
-                    
-                   
+
+
                     <View style={styles.inputContainer}>
                         <Icon style={styles.emailIcon} name="address-card" size={16} />
                         <TextInput
